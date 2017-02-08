@@ -1,4 +1,4 @@
-# music-ss
+# Social Music Network
 
 System Software module coursework for second year undergraduate.
 
