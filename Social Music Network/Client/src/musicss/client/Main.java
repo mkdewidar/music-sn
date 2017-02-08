@@ -1,5 +1,7 @@
+package musicss.client;
+
 /**
- * Created by mkdewidar on 2/8/2017.
+ * Program starts here.
  */
 public class Main {
     public static void main(String[] args) {
