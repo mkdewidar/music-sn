@@ -23,12 +23,12 @@ public class Main {
         }
 
         Socket userSocket;
-        InputStream socketContentStream;
+        BufferedReader socketContentStream;
         while (isRunning) {
             try {
                 System.out.println("Awaiting client connection...");
                 userSocket = serverSocket.accept();
-                socketContentStream = userSocket.getInputStream();
+                socketContentStream = new BufferedReader(new InputStreamReader(userSocket.getInputStream()));
 
                 System.out.println("Connected to user: " + userSocket.getInetAddress().getHostAddress());
             } catch (IOException e) {
@@ -40,8 +40,8 @@ public class Main {
             while (true) {
 
                 try {
-                    System.out.println(((char) socketContentStream.read()));
                     System.out.println("Msg from " + userSocket.getInetAddress().getHostAddress());
+                    System.out.println("\t" + socketContentStream.readLine());
                 } catch (IOException e) {
                     System.out.println("ERROR reading user msg " + e.getMessage() +
                             "\n potentially connection lost");

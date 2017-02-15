@@ -1,7 +1,7 @@
 package musicss.client;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -11,18 +11,18 @@ import java.net.UnknownHostException;
  */
 public class NetworkManager {
     private Socket socket;
-    private OutputStream intoSocketStream;
+    private PrintStream intoSocketStream;
 
     /**
-     * Creates the network manager instance
+     * Creates the network manager instance.
      *
-     * @throws UnknownHostException When the address of the server couldn't be resolved
+     * @throws UnknownHostException When the address of the server couldn't be resolved.
      *
-     * @throws IOException When an IO error occurs while creating the socket or while getting the output stream.
+     * @throws IOException When an IO error occurs while creating the socket or accessing a stream.
      */
     public NetworkManager() throws UnknownHostException, IOException{
         socket = new Socket(InetAddress.getByName("localhost"), 9999);
-        intoSocketStream = socket.getOutputStream();
+        intoSocketStream = new PrintStream(socket.getOutputStream(), true);
     }
 
     /**
@@ -40,10 +40,10 @@ public class NetworkManager {
      *
      * @param msg The msg to be sent over the network.
      *
-     * @throws IOException When sending the msg fails for some reason
+     * @throws IOException When sending the msg fails for some reason.
      */
     public void SendString(String msg) throws IOException {
-        intoSocketStream.write(msg.getBytes());
+        intoSocketStream.println(msg);
     }
 
     /**
