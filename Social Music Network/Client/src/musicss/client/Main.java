@@ -1,48 +1,47 @@
 package musicss.client;
 
 import java.io.*;
-import java.net.Inet4Address;
-import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
- * Program starts here, any network exceptions that
- * result in the program not working are handled here.
+ * Program starts here.
  */
 public class Main {
     public static void main(String[] args) {
-        Socket socket;
-        boolean isRunning;
+        NetworkManager networkManager;
         BufferedReader inputReader;
-        OutputStream intoSocketStream;
+
+        boolean isRunning = true;
 
         try {
-            socket = new Socket(Inet4Address.getByName("localhost"), 9999);
-            isRunning = true;
+            networkManager = new NetworkManager();
             inputReader = new BufferedReader(new InputStreamReader(System.in));
-            intoSocketStream = socket.getOutputStream();
 
             System.out.println("You have been connected to the server.");
-        } catch (IOException e) {
-            System.out.println("ERROR " + e.getMessage());
 
+        } catch (UnknownHostException e) {
+            System.err.println("ERROR: Couldn't find host address\n\t" + e.getMessage());
+            return;
+        } catch (IOException e) {
+            System.err.println("ERROR: An IO error occurred during setup\n\t" + e.getMessage());
             return;
         }
 
 
         while (isRunning) {
             try {
-                intoSocketStream.write(inputReader.readLine().getBytes());
+                networkManager.SendString(inputReader.readLine());
             } catch (IOException e) {
-                System.out.println("ERROR " + e.getMessage());
+                System.err.println("ERROR: Could not send message due to IO error\n\t " + e.getMessage());
                 break;
             }
         }
 
         System.out.println("Disconnecting from server...");
         try {
-            socket.close();
+            networkManager.Close();
         } catch (IOException e) {
-            System.out.println("ERROR closing socket: " + e.getMessage());
+            System.err.println("ERROR: An IO error occurred while closing resources\n\t" + e.getMessage());
         }
     }
 }
