@@ -17,44 +17,19 @@ public class Main {
         try {
             serverSocket = new ServerSocket(9999);
         } catch (IOException e) {
-            System.out.println("ERROR " + e.getMessage());
-
+            System.err.println("ERROR: Can't create server socket\n\t" + e.getMessage());
             return;
         }
 
-        Socket userSocket;
-        BufferedReader socketContentStream;
         while (isRunning) {
-            try {
-                System.out.println("Awaiting client connection...");
-                userSocket = serverSocket.accept();
-                socketContentStream = new BufferedReader(new InputStreamReader(userSocket.getInputStream()));
-
-                System.out.println("Connected to user: " + userSocket.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                System.out.println("ERROR " + e.getMessage());
-                continue;
-            }
-
-            // stay with client as long as they are connected
-            while (true) {
-
-                try {
-                    System.out.println("Msg from " + userSocket.getInetAddress().getHostAddress());
-                    System.out.println("\t" + socketContentStream.readLine());
-                } catch (IOException e) {
-                    System.out.println("ERROR reading user msg " + e.getMessage() +
-                            "\n potentially connection lost");
-                    break;
-                }
-            }
+            System.out.println("Awaiting another client connection...");
 
             try {
-                socketContentStream.close();
+                new Thread(new ServerWorker(serverSocket.accept())).start();
             } catch (IOException e) {
-                System.out.println("ERROR " + e.getMessage());
+                System.err.println("ERROR: Failed to connect to client or client streams couldn't be created" +
+                        "\n\t" + e.getMessage());
             }
         }
-
     }
 }
