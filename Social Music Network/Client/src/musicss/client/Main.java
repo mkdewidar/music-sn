@@ -1,21 +1,43 @@
 package musicss.client;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
 import java.io.*;
 import java.net.UnknownHostException;
 
 /**
  * Program starts here.
  */
-public class Main {
-    public static void main(String[] args) {
-        NetworkManager networkManager;
-        BufferedReader inputReader;
+public class Main extends Application {
 
-        boolean isRunning = true;
+    private Stage mainStage;
+    private Scene mainScene;
+
+    private NetworkManager networkManager;
+
+    @Override
+    public void start(Stage primaryStage) {
+        Parent root;
+        try {
+            root = FXMLLoader.load(getClass().getResource("ClientWindow.fxml"));
+            mainScene = new Scene(root, 500, 500);
+            primaryStage.setScene(mainScene);
+        } catch (IOException e) {
+            System.err.println("ERROR: Couldn't load ClientWindow.fxml\n\t" + e.getMessage());
+            Platform.exit();
+        }
+
+        mainStage = primaryStage;
+        mainStage.show();
 
         try {
             networkManager = new NetworkManager();
-            inputReader = new BufferedReader(new InputStreamReader(System.in));
 
             System.out.println("You have been connected to the server.");
 
@@ -26,22 +48,21 @@ public class Main {
             System.err.println("ERROR: An IO error occurred during setup\n\t" + e.getMessage());
             return;
         }
+    }
 
-
-        while (isRunning) {
-            try {
-                networkManager.SendString(inputReader.readLine());
-            } catch (IOException e) {
-                System.err.println("ERROR: Could not send message due to IO error\n\t " + e.getMessage());
-                break;
-            }
-        }
-
+    @Override
+    public void stop() {
         System.out.println("Disconnecting from server...");
         try {
-            networkManager.Close();
+            if (networkManager != null) {
+                networkManager.Close();
+            }
         } catch (IOException e) {
             System.err.println("ERROR: An IO error occurred while closing resources\n\t" + e.getMessage());
         }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
