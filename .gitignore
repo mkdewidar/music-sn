@@ -13,3 +13,6 @@ hs_err_pid*
 
 # the user config files for IntelliJ
 *.iws
+
+# the output folder for IntelliJ
+out/
