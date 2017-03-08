@@ -3,8 +3,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 
-<VBox alignment="CENTER">
-    <Label>Insert Message and press enter:</Label>
-    <TextField/>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER" fx:controller="musicss.client.LoginController">
+    <Label>Username</Label>
+    <TextField maxWidth="200" fx:id="usernameTextField"/>
+    <Label>Password</Label>
+    <PasswordField maxWidth="200" fx:id="passwordTextField"/>
 </VBox>
