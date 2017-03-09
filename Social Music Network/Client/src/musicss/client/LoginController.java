@@ -8,8 +8,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static musicss.client.NetworkManager.connectionManager;
 
 /**
  * Controls the login screen of the interface.
@@ -39,8 +42,16 @@ public class LoginController implements Initializable {
                     System.out.println("Sending username: " + usernameTextField.getText()
                             + ", password: "+ passwordTextField.getText());
 
+                    try {
+                        connectionManager.SendString("Sending username: " + usernameTextField.getText()
+                                + ", password: "+ passwordTextField.getText());
+                    } catch (IOException e) {
+                        System.err.println("ERROR: The msg couldn't be send due to connection issue\n\t" + e.getMessage());
+                    }
+
                     usernameTextField.clear();
                     passwordTextField.clear();
+
                 }
             }
         });
