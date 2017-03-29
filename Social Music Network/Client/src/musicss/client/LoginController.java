@@ -11,8 +11,6 @@ import javafx.scene.input.KeyEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static musicss.client.ConnectionController.connectionController;
-
 /**
  * Controls the login screen of the interface.
  */
@@ -38,11 +36,6 @@ public class LoginController implements Initializable {
                 if (event.getCode() == KeyCode.ENTER) {
                     System.out.println("Sending username: " + usernameTextField.getText()
                             + ", password: "+ passwordTextField.getText());
-
-                    if (connectionController.IsConnected()) {
-                        connectionController.SendString("Sending username: " + usernameTextField.getText()
-                                + ", password: "+ passwordTextField.getText());
-                    }
 
                     usernameTextField.clear();
                     passwordTextField.clear();

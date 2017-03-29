@@ -4,8 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 
-<FlowPane xmlns:fx="http://javafx.com/fxml"
-          fx:controller="musicss.client.ConnectionController">
+<FlowPane xmlns:fx="http://javafx.com/fxml">
     <Label>You are not connected to the server...check your connection and try again</Label>
     <Button fx:id="reconnectButton">Re-connect</Button>
 </FlowPane>

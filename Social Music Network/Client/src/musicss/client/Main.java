@@ -2,7 +2,6 @@ package musicss.client;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,26 +10,33 @@ import javafx.stage.Stage;
 
 import java.io.*;
 
-import static musicss.client.ConnectionController.connectionController;
-
 /**
- * Program starts here.
+ * Root controller of the program, mediates between the UI controls
+ * and each other as well as between the UI controls and the network.
  */
 public class Main extends Application {
 
-    private Stage mainStage;
-    private Scene mainScene;
+    private BorderPane rootNode;
+    // The reference to the network status banner
+    private Parent netStatusBanner;
 
-    private Parent loginSubscene;
-    private Parent connectionBanner;
+    private NetworkController networkController;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) {
-        BorderPane root;
+        networkController = NetworkController.connectionController;
+
+        // The node containing all login UI elements
+        Parent loginNode;
+
         try {
-            root = FXMLLoader.load(getClass().getResource("MasterScene.fxml"));
-            loginSubscene = FXMLLoader.load(getClass().getResource("LoginSubscene.fxml"));
-            connectionBanner = FXMLLoader.load(getClass().getResource("ConnectionBanner.fxml"));
+            rootNode = FXMLLoader.load(getClass().getResource("RootNode.fxml"));
+            netStatusBanner = FXMLLoader.load(getClass().getResource("NetStatusBanner.fxml"));
+            loginNode = FXMLLoader.load(getClass().getResource("LoginContent.fxml"));
 
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't load one or more of the fxml files\n\t" + e.getMessage());
@@ -38,26 +44,25 @@ public class Main extends Application {
             return;
         }
 
-        root.setTop(connectionBanner);
-        root.setCenter(loginSubscene);
+        rootNode.setTop(netStatusBanner);
+        rootNode.setCenter(loginNode);
 
-        mainScene = new Scene(root, 500, 500);
+        Scene mainScene = new Scene(rootNode, 500, 500);
         primaryStage.setScene(mainScene);
+        primaryStage.show();
 
-        mainStage = primaryStage;
-        mainStage.show();
+        setupEventFilters();
+    }
+
+    private void setupEventFilters() {
     }
 
     @Override
     public void stop() {
         System.out.println("Disconnecting from server...");
 
-        if (connectionController != null) {
-            connectionController.Close();
+        if (networkController != null) {
+            networkController.close();
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
