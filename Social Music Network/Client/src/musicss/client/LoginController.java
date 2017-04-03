@@ -7,14 +7,18 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+import musicss.client.event.LoginEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controls the login screen of the interface.
+ * Controls the login content.
  */
 public class LoginController implements Initializable {
+    @FXML
+    private VBox parentNode;
     @FXML
     private TextField usernameTextField;
     @FXML
@@ -34,12 +38,18 @@ public class LoginController implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.ENTER) {
-                    System.out.println("Sending username: " + usernameTextField.getText()
-                            + ", password: "+ passwordTextField.getText());
+                    LoginEvent loginEvent = new LoginEvent(usernameTextField.getText(), passwordTextField.getText());
+                    parentNode.fireEvent(loginEvent);
 
                     usernameTextField.clear();
                     passwordTextField.clear();
                 }
+            }
+        });
+        parentNode.addEventHandler(LoginEvent.LoginEventType, new EventHandler<LoginEvent>() {
+            @Override
+            public void handle(LoginEvent event) {
+                System.out.println("The event was handled by the login controller");
             }
         });
     }

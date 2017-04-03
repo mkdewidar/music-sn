@@ -2,11 +2,15 @@ package musicss.client;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import musicss.client.event.LoginEvent;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.io.*;
 
@@ -30,6 +34,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         networkController = NetworkController.connectionController;
 
+        try {
+            networkController.connect();
+        } catch (IOException e) {
+        }
+
         // The node containing all login UI elements
         Parent loginNode;
 
@@ -47,14 +56,25 @@ public class Main extends Application {
         rootNode.setTop(netStatusBanner);
         rootNode.setCenter(loginNode);
 
+        setupEventFilters();
+
         Scene mainScene = new Scene(rootNode, 500, 500);
         primaryStage.setScene(mainScene);
         primaryStage.show();
-
-        setupEventFilters();
     }
 
     private void setupEventFilters() {
+        // Event filters happen before handlers, this lets us do processing on the data before
+        // letting the event get handled by another node
+        rootNode.addEventFilter(LoginEvent.LoginEventType, new EventHandler<LoginEvent>() {
+            @Override
+            public void handle(LoginEvent event) {
+                System.out.println("Sending login data over network");
+
+                networkController.sendString("The username is: " + event.getUsername() +
+                        ", and the pass is: " + event.getPassword());
+            }
+        });
     }
 
     @Override

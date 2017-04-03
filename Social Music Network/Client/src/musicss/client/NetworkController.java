@@ -53,6 +53,14 @@ public class NetworkController {
     }
 
     /**
+     * Returns whether or not the controller is connected to the server
+     */
+    public boolean isConnected() {
+        // TODO: insert code to check the connection status
+        return true;
+    }
+
+    /**
      * Sends a given string over the network.
      *
      * @param msg The msg to be sent over the network.

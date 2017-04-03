@@ -6,7 +6,7 @@
 <?import javafx.scene.control.PasswordField?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      alignment="CENTER" fx:controller="musicss.client.LoginController">
+      alignment="CENTER" fx:controller="musicss.client.LoginController" fx:id="parentNode">
     <Label>Username</Label>
     <TextField maxWidth="200" fx:id="usernameTextField"/>
     <Label>Password</Label>
