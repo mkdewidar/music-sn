@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 
 import musicss.client.control.LoginControl;
+import musicss.client.control.StatusControl;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,5 +20,6 @@ public class UIController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         rootNode.setCenter(new LoginControl());
+        rootNode.setTop(new StatusControl());
     }
 }
