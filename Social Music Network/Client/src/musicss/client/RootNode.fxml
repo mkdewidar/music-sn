@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Serves as a master page for the application, the different parts of the UI are injected in here -->
-
 <?import javafx.scene.layout.BorderPane?>
 
 <!-- The root of the scene, this will always be here -->
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="musicss.client.Main">
+            fx:controller="musicss.client.UIController" fx:id="rootNode">
 </BorderPane>
