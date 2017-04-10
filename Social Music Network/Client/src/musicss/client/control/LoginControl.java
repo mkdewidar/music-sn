@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
+import musicss.client.NetworkController;
 
 import java.io.IOException;
 
@@ -46,7 +47,7 @@ public class LoginControl extends VBox {
     }
 
     protected void loginSubmit() {
-        // TODO: Send data over the network
+        NetworkController.connectionController.send(usernameField.getText() + " " + passwordField.getText());
 
         usernameField.clear();
         passwordField.clear();

@@ -39,7 +39,7 @@ public class NetworkController {
     /**
      * Connects the controller to the server.
      */
-    public void connect() throws IOException {
+    public void connect() {
         try {
             socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 9999));
             outputStream = new PrintStream(socket.getOutputStream());
@@ -48,7 +48,6 @@ public class NetworkController {
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't connect to server or get stream\n\t" + e.getMessage());
             e.printStackTrace();
-            throw e;
         }
     }
 
@@ -65,7 +64,11 @@ public class NetworkController {
      *
      * @param msg The msg to be sent over the network.
      */
-    public void sendString(String msg) {
+    public void send(String msg) {
+        // If we don't have an output stream then try to connect before we send anything
+        if (outputStream == null) {
+            connect();
+        }
         if (outputStream != null) {
             outputStream.println(msg);
         }

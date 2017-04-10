@@ -24,6 +24,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         networkController = NetworkController.connectionController;
 
+        networkController.connect();
+
         // This root node will load the root parent node with a UI Controller that will manage everything
         // that has to do with the UI the user sees
         Parent rootNode;
