@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
@@ -20,7 +21,7 @@ public class RegisterControl extends VBox {
     @FXML
     protected TextField usernameField;
     @FXML
-    protected TextField passwordField;
+    protected PasswordField passwordField;
     @FXML
     protected Button registerButton;
 
