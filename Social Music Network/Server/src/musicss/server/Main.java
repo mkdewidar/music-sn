@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Program starts here.
+ * Server entry point.
  */
 public class Main {
     public static void main(String[] args) {
@@ -22,7 +22,7 @@ public class Main {
         }
 
         while (isRunning) {
-            System.out.println("Awaiting another client connection...");
+            System.out.println("Awaiting client connection...");
 
             try {
                 new Thread(new ServerWorker(serverSocket.accept())).start();

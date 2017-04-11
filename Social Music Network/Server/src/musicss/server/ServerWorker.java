@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
- * Thread code that serves a single connected client.
+ * Represents a thread that serves one single client.
  */
 public class ServerWorker implements Runnable {
     private Socket socket;
@@ -39,7 +39,12 @@ public class ServerWorker implements Runnable {
             try {
                 System.out.print("Thread #" + Thread.currentThread().getId());
                 System.out.println(", msg from " + socket.getInetAddress().getHostAddress());
-                System.out.println("\t" + socketReader.readLine());
+
+                String userMsg = socketReader.readLine();
+                if (userMsg == null) {
+                    break;
+                }
+                System.out.println("\t" + userMsg);
             } catch (IOException e) {
                 System.err.println("ERROR: Couldn't read from user stream, connection may be lost " + e.getMessage());
                 break;
