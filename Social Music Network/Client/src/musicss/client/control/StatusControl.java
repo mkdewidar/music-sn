@@ -27,7 +27,7 @@ public class StatusControl extends HBox {
                 NetworkController.connectionController.connect();
             });
         } catch (IOException e) {
-            System.out.println("ERROR: Couldn't load the Status fxml file\n\t" + e.getMessage());
+            System.err.println("ERROR: Couldn't load the Status fxml file\n\t" + e.getMessage());
             e.printStackTrace();
         }
 

@@ -31,7 +31,7 @@ public class LoginControl extends VBox {
         try {
             fxmlLoader.load();
         } catch (IOException e) {
-            System.out.println("ERROR: Couldn't load login fxml\n\t" + e.getMessage());
+            System.err.println("ERROR: Couldn't load login fxml\n\t" + e.getMessage());
             e.printStackTrace();
             Platform.exit();
             return;
