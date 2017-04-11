@@ -1,8 +1,8 @@
 package musicss.server;
 
-import musicss.server.message.Request;
-import musicss.server.message.Response;
-import musicss.server.protocol.ProtocolImplementer;
+import musicss.protocol.message.Request;
+import musicss.protocol.message.Response;
+import musicss.protocol.ProtocolImplementer;
 
 import java.io.BufferedReader;
 import java.io.IOException;

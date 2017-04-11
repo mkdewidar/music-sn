@@ -1,7 +1,7 @@
-package musicss.server.protocol;
+package musicss.protocol;
 
-import musicss.server.message.Request;
-import musicss.server.message.Response;
+import musicss.protocol.message.Request;
+import musicss.protocol.message.Response;
 
 /**
  * Class that implements the application layer protocol.

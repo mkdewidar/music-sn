@@ -1,4 +1,4 @@
-package musicss.server.message;
+package musicss.protocol.message;
 
 /**
  * All the events that could happen to the server.

@@ -1,4 +1,4 @@
-package musicss.server.message;
+package musicss.protocol.message;
 
 /**
  * A response that the server can give the client.
