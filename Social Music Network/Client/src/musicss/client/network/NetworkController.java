@@ -75,6 +75,8 @@ public class NetworkController {
      */
     public Response sendRequest(Request request) {
         String msg = protocol.pack(request);
+        if (msg.equals(ProtocolImplementer.StatusCodes.VOID))
+            System.out.println("This message has been identified as VOID");
         Response response = new Response.Void();
 
         if (outputStream != null)
@@ -102,6 +104,9 @@ public class NetworkController {
                 isConnected = false;
             } else {
                 response = protocol.unpackResponse(msg);
+
+                if (response.type == Response.Types.VOID)
+                    System.out.println("This response has been identified as VOID");
             }
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't read response" + e.getMessage());
