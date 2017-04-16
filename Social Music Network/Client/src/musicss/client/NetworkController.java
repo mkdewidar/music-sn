@@ -1,6 +1,8 @@
 package musicss.client;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -14,6 +16,7 @@ public class NetworkController {
 
     private Socket socket;
     private PrintStream outputStream;
+    private BufferedReader inputStream;
 
     private NetworkController() {
         connectionController = this;
@@ -42,7 +45,9 @@ public class NetworkController {
     public void connect() {
         try {
             socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 9999));
+
             outputStream = new PrintStream(socket.getOutputStream());
+            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             System.out.println("Successfully connected to the server.");
         } catch (IOException e) {
@@ -60,7 +65,7 @@ public class NetworkController {
     }
 
     /**
-     * Sends a given string over the network.
+     * Sends a given packed message over the network.
      *
      * @param msg The msg to be sent over the network.
      */
@@ -76,8 +81,19 @@ public class NetworkController {
 
     /**
      * Reads the string from the socket.
-
-    public String GetString() {
-    }
+     *
+     * return The packed message obtained from the server.
      */
+    public String GetString() {
+        String msg = "";
+
+        try {
+            msg = inputStream.readLine();
+        } catch (IOException e) {
+            System.err.println("ERROR: Couldn't read from the server, it's disconnected\n\t" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return msg;
+    }
 }

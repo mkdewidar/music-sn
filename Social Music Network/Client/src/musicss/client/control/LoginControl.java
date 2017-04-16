@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import musicss.client.NetworkController;
+import musicss.client.event.AppEvent;
 
 import java.io.IOException;
 
@@ -45,12 +46,20 @@ public class LoginControl extends VBox {
             if (event.getCode() == KeyCode.ENTER)
                 loginSubmit();
         });
+
+        this.addEventHandler(AppEvent.Login.Type, (event) -> {
+            // This is after the UI controller has sent the data to the server and received a response
+            // TODO: consume the event if the response is a failure
+            // TODO: show the user if their authentication failed
+        });
     }
 
     protected void loginSubmit() {
-        NetworkController.connectionController.send(usernameField.getText() + " " + passwordField.getText());
+        AppEvent.Login loginEvent = new AppEvent.Login();
 
-        usernameField.clear();
-        passwordField.clear();
+        loginEvent.username = usernameField.getText();
+        loginEvent.password = passwordField.getText();
+
+        this.fireEvent(loginEvent);
     }
 }

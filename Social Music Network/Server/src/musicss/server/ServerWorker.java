@@ -56,9 +56,9 @@ public class ServerWorker implements Runnable {
                 break;
             }
 
-            Request clientRequest = protocol.unpack(packedMessage);
+            Request clientRequest = protocol.unpackRequest(packedMessage);
 
-            Response response = clientRequest.execute();
+            Response response = new Response.Ok();
 
             packedMessage = protocol.pack(response);
             socketPrintStream.println(packedMessage);
