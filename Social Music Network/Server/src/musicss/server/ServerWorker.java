@@ -58,7 +58,7 @@ public class ServerWorker implements Runnable {
 
             Request clientRequest = protocol.unpackRequest(packedMessage);
 
-            Response response = new Response.Ok();
+            Response response = new Response.InvalidAuth();
 
             packedMessage = protocol.pack(response);
             socketPrintStream.println(packedMessage);

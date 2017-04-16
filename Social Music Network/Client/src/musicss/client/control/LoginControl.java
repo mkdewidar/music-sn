@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -23,6 +24,8 @@ public class LoginControl extends VBox {
     protected PasswordField passwordField;
     @FXML
     protected Button loginButton;
+    @FXML
+    protected Label invalidLoginLabel;
 
     protected LoginSceneController controller;
 
@@ -62,6 +65,11 @@ public class LoginControl extends VBox {
      */
     protected void loginSubmit() {
         controller.validateLogin(usernameField.getText(), passwordField.getText());
+    }
+
+    public void setInvalidLogin() {
+        invalidLoginLabel.setVisible(true);
+        invalidLoginLabel.setManaged(true);
     }
 
     /**

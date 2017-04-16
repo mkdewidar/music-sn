@@ -41,6 +41,8 @@ public class LoginSceneController extends SceneController {
         if (response.type == Response.Types.OK) {
             AppEvent.Login login = new AppEvent.Login();
             rootNode.fireEvent(login);
+        } else if (response.type == Response.Types.INVALIDAUTH) {
+            loginForm.setInvalidLogin();
         }
     }
 }
