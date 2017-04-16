@@ -8,8 +8,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-import musicss.client.NetworkController;
-import musicss.client.event.AppEvent;
+
+import musicss.client.scene.LoginSceneController;
 
 import java.io.IOException;
 
@@ -24,7 +24,14 @@ public class LoginControl extends VBox {
     @FXML
     protected Button loginButton;
 
-    public LoginControl() {
+    protected LoginSceneController controller;
+
+    /**
+     * Constructor for the Login Control, it requires a @see musicss.client.scene.LoginSceneController as it
+     *      depends on it to validate the login information.
+     * @param loginController The login controller that this login control will depend on.
+     */
+    public LoginControl(LoginSceneController loginController) {
         // The fxml file has all the layout and structural information for the buttons and fields
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginControl.fxml"));
         fxmlLoader.setController(this);
@@ -39,6 +46,8 @@ public class LoginControl extends VBox {
             return;
         }
 
+        controller = loginController;
+
         loginButton.setOnAction((event) -> {
             loginSubmit();
         });
@@ -46,20 +55,28 @@ public class LoginControl extends VBox {
             if (event.getCode() == KeyCode.ENTER)
                 loginSubmit();
         });
-
-        this.addEventHandler(AppEvent.Login.Type, (event) -> {
-            // This is after the UI controller has sent the data to the server and received a response
-            // TODO: consume the event if the response is a failure
-            // TODO: show the user if their authentication failed
-        });
     }
 
+    /**
+     * Logs in the user by asking the controller to validate the results.
+     */
     protected void loginSubmit() {
-        AppEvent.Login loginEvent = new AppEvent.Login();
+        controller.validateLogin(usernameField.getText(), passwordField.getText());
+    }
 
-        loginEvent.username = usernameField.getText();
-        loginEvent.password = passwordField.getText();
+    /**
+     * Accessor function to get the username.
+     * @return The username of the user as a String.
+     */
+    public String getUsername() {
+        return usernameField.getText();
+    }
 
-        this.fireEvent(loginEvent);
+    /**
+     * Accessor function to get the password
+     * @return The password of the user as a String.
+     */
+    public String getPassword() {
+        return passwordField.getText();
     }
 }

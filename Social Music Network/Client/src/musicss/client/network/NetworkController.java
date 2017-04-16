@@ -1,4 +1,4 @@
-package musicss.client;
+package musicss.client.network;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,7 +60,10 @@ public class NetworkController {
      * Returns whether or not the controller is connected to the server
      */
     public boolean isConnected() {
-        // TODO: insert code to check the connection status
+        String s = GetString();
+        if (s == null) {
+            return false;
+        }
         return true;
     }
 

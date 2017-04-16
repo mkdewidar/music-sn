@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+
+<!-- The root of the scene, this will always be here -->
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="musicss.client.scene.LoginSceneController" fx:id="rootNode">
+</BorderPane>
