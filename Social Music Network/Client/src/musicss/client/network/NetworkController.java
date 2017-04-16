@@ -1,5 +1,9 @@
 package musicss.client.network;
 
+import musicss.protocol.ProtocolImplementer;
+import musicss.protocol.message.Request;
+import musicss.protocol.message.Response;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,16 +16,20 @@ import java.net.Socket;
  * Singleton controller that manages all exterior connections to the application server
  */
 public class NetworkController {
-    public static NetworkController connectionController = new NetworkController();
+    public static NetworkController instance = new NetworkController();
+
+    public boolean isConnected;
 
     private Socket socket;
     private PrintStream outputStream;
     private BufferedReader inputStream;
+    private ProtocolImplementer protocol;
 
     private NetworkController() {
-        connectionController = this;
-
+        instance = this;
+        protocol = new ProtocolImplementer();
         socket = new Socket();
+        isConnected = false;
     }
 
     /**
@@ -49,6 +57,8 @@ public class NetworkController {
             outputStream = new PrintStream(socket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            isConnected = true;
+
             System.out.println("Successfully connected to the server.");
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't connect to server or get stream\n\t" + e.getMessage());
@@ -57,46 +67,47 @@ public class NetworkController {
     }
 
     /**
-     * Returns whether or not the controller is connected to the server
-     */
-    public boolean isConnected() {
-        String s = GetString();
-        if (s == null) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Sends a given packed message over the network.
+     * Parses a given request and sends it over to the server, returns the response from the server.
      *
-     * @param msg The msg to be sent over the network.
+     * @param request The request to be sent over the network.
+     *
+     * @return The response for the request made.
      */
-    public void send(String msg) {
-        // If we don't have an output stream then try to connect before we send anything
-        if (outputStream == null) {
-            connect();
-        }
-        if (outputStream != null) {
+    public Response sendRequest(Request request) {
+        String msg = protocol.pack(request);
+        Response response = new Response.Void();
+
+        if (outputStream != null)
+        {
             outputStream.println(msg);
+
+            response = getResponse();
         }
+
+        return response;
     }
 
     /**
-     * Reads the string from the socket.
+     * Returns the response that just arrived.
      *
-     * return The packed message obtained from the server.
+     * @return The response from the server
      */
-    public String GetString() {
-        String msg = "";
+    public Response getResponse() {
+        Response response = new Response.Void();
 
         try {
-            msg = inputStream.readLine();
+            String msg = inputStream.readLine();
+            if (msg == null) {
+                // the connection has been broken
+                isConnected = false;
+            } else {
+                response = protocol.unpackResponse(msg);
+            }
         } catch (IOException e) {
-            System.err.println("ERROR: Couldn't read from the server, it's disconnected\n\t" + e.getMessage());
+            System.err.println("ERROR: Couldn't read response" + e.getMessage());
             e.printStackTrace();
         }
 
-        return msg;
+        return response;
     }
 }

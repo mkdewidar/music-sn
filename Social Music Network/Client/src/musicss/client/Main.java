@@ -26,7 +26,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        networkController = NetworkController.connectionController;
+        networkController = NetworkController.instance;
         networkController.connect();
 
         // we need the stage to be able to change scenes later

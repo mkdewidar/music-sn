@@ -66,9 +66,9 @@ public class ProtocolImplementer {
     public Response unpackResponse(String msg) {
         Response clientRequest = new Response.Void();
 
-        if (msg == StatusCodes.OK) {
+        if (msg.equals(StatusCodes.OK)) {
             clientRequest = new Response.Ok();
-        } else if (msg == StatusCodes.INVALIDAUTH) {
+        } else if (msg.equals(StatusCodes.INVALIDAUTH)) {
             clientRequest = new Response.InvalidAuth();
         }
 

@@ -5,6 +5,8 @@ import javafx.scene.layout.BorderPane;
 
 import musicss.client.control.LoginControl;
 import musicss.client.event.AppEvent;
+import musicss.protocol.message.Request;
+import musicss.protocol.message.Response;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,9 +31,16 @@ public class LoginSceneController extends SceneController {
     }
 
     public void validateLogin(String username, String password) {
-        System.out.println("Of course your login is valid!");
-        // TODO: send request to server and await validation response
-        AppEvent.Login login = new AppEvent.Login();
-        rootNode.fireEvent(login);
+
+        Request.Login loginRequest = new Request.Login();
+        loginRequest.username = username;
+        loginRequest.password = password;
+
+        Response response = this.networkController.sendRequest(loginRequest);
+
+        if (response.type == Response.Types.OK) {
+            AppEvent.Login login = new AppEvent.Login();
+            rootNode.fireEvent(login);
+        }
     }
 }

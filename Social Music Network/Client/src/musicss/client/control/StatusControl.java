@@ -24,7 +24,7 @@ public class StatusControl extends HBox {
             fxmlLoader.load();
 
             reconnectButton.setOnAction((event) -> {
-                NetworkController.connectionController.connect();
+                NetworkController.instance.connect();
             });
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't load the Status fxml file\n\t" + e.getMessage());
