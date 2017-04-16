@@ -34,7 +34,7 @@ public class ProtocolImplementer {
         if (msg.startsWith("login:")) {
             Request.Login loginRequest = new Request.Login();
 
-            String[] fields = msg.substring(0, 6).split(",");
+            String[] fields = msg.substring(6).split(",");
             if (fields.length >= 2) {
                 loginRequest.username = fields[0];
                 loginRequest.password = fields[1];
@@ -44,7 +44,7 @@ public class ProtocolImplementer {
         } else if (msg.startsWith("register:")) {
             Request.Register registerRequest = new Request.Register();
 
-            String[] fields = msg.substring(0, 9).split(",");
+            String[] fields = msg.substring(9).split(",");
             if (fields.length >= 4) {
                 registerRequest.name = fields[0];
                 registerRequest.username = fields[1];

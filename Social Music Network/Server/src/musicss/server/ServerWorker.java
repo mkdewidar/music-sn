@@ -20,10 +20,12 @@ public class ServerWorker implements Runnable {
     // The message obtained from or to be sent to the client, it's already in it's packed form
     private String packedMessage;
     private ProtocolImplementer protocol;
+    private Executor executor;
 
     public ServerWorker(Socket clientSocket) throws IOException {
         ServeClient(clientSocket);
         protocol = new ProtocolImplementer();
+        executor = new Executor();
     }
 
     /**
@@ -58,7 +60,7 @@ public class ServerWorker implements Runnable {
 
             Request clientRequest = protocol.unpackRequest(packedMessage);
 
-            Response response = new Response.InvalidAuth();
+            Response response = executor.process(clientRequest);
 
             packedMessage = protocol.pack(response);
             socketPrintStream.println(packedMessage);
