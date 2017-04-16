@@ -30,8 +30,6 @@ public class StatusControl extends HBox {
             System.err.println("ERROR: Couldn't load the Status fxml file\n\t" + e.getMessage());
             e.printStackTrace();
         }
-
-        setConnected(true);
     }
 
     public void setConnected(boolean connected) {

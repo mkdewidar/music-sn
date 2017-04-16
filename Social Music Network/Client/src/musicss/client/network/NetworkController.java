@@ -1,5 +1,7 @@
 package musicss.client.network;
 
+import javafx.beans.property.SimpleBooleanProperty;
+
 import musicss.protocol.ProtocolImplementer;
 import musicss.protocol.message.Request;
 import musicss.protocol.message.Response;
@@ -9,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -18,7 +19,7 @@ import java.net.Socket;
 public class NetworkController {
     public static NetworkController instance = new NetworkController();
 
-    public boolean isConnected;
+    public SimpleBooleanProperty isConnected;
 
     private Socket socket;
     private PrintStream outputStream;
@@ -29,7 +30,7 @@ public class NetworkController {
         instance = this;
         protocol = new ProtocolImplementer();
         socket = new Socket();
-        isConnected = false;
+        isConnected = new SimpleBooleanProperty(false);
     }
 
     /**
@@ -52,12 +53,12 @@ public class NetworkController {
      */
     public void connect() {
         try {
-            socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 9999));
+            socket = new Socket(InetAddress.getLocalHost(), 9999);
 
             outputStream = new PrintStream(socket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            isConnected = true;
+            isConnected.set(true);
 
             System.out.println("Successfully connected to the server.");
         } catch (IOException e) {
@@ -79,11 +80,14 @@ public class NetworkController {
             System.out.println("This message has been identified as VOID");
         Response response = new Response.Void();
 
+        // It can be null if we never connected to the server to begin with
         if (outputStream != null)
         {
             outputStream.println(msg);
 
             response = getResponse();
+        } else {
+            isConnected.set(false);
         }
 
         return response;
@@ -100,8 +104,7 @@ public class NetworkController {
         try {
             String msg = inputStream.readLine();
             if (msg == null) {
-                // the connection has been broken
-                isConnected = false;
+                isConnected.set(false);
             } else {
                 response = protocol.unpackResponse(msg);
 
@@ -111,6 +114,8 @@ public class NetworkController {
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't read response" + e.getMessage());
             e.printStackTrace();
+
+            isConnected.set(false);
         }
 
         return response;

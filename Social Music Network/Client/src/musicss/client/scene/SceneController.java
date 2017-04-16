@@ -20,5 +20,9 @@ public class SceneController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         statusBanner = new StatusControl();
         networkController = NetworkController.instance;
+        // Updates the status banner as per the is connected variable
+        networkController.isConnected.addListener((event) -> {
+            statusBanner.setConnected(networkController.isConnected.get());
+        });
     }
 }
