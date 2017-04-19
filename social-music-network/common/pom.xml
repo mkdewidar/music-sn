@@ -7,8 +7,8 @@
     <artifactId>social-music-network</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>com.smn.app</groupId>
-  <artifactId>common</artifactId>
+  <groupId>com.smn.app.protocol</groupId>
+  <artifactId>protocol</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>common</name>
   <url>http://maven.apache.org</url>

@@ -1,8 +1,9 @@
-package musicss.client.scene;
+package com.smn.app.client.scene;
+
+import com.smn.app.client.control.StatusControl;
+import com.smn.app.client.network.NetworkController;
 
 import javafx.fxml.Initializable;
-import musicss.client.control.StatusControl;
-import musicss.client.network.NetworkController;
 
 import java.net.URL;
 import java.util.ResourceBundle;

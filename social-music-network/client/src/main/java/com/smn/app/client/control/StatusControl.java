@@ -1,10 +1,10 @@
-package musicss.client.control;
+package com.smn.app.client.control;
 
+import com.smn.app.client.network.NetworkController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
-import musicss.client.network.NetworkController;
 
 import java.io.IOException;
 

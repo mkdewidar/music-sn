@@ -1,13 +1,13 @@
-package musicss.client;
+package com.smn.app.client;
 
+import com.smn.app.client.event.AppEvent;
+import com.smn.app.client.network.NetworkController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import musicss.client.event.AppEvent;
-import musicss.client.network.NetworkController;
 
 import java.io.*;
 

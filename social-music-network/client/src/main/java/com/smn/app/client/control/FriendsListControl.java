@@ -1,9 +1,10 @@
-package musicss.client.control;
+package com.smn.app.client.control;
+
+import com.smn.app.client.scene.AppSceneController;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
-import musicss.client.scene.AppSceneController;
 
 /**
  * A custom control that manages the users list of friends.

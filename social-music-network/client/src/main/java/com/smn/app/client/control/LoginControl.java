@@ -1,4 +1,6 @@
-package musicss.client.control;
+package com.smn.app.client.control;
+
+import com.smn.app.client.scene.LoginSceneController;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -9,8 +11,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-
-import musicss.client.scene.LoginSceneController;
 
 import java.io.IOException;
 

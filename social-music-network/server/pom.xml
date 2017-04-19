@@ -7,7 +7,7 @@
     <artifactId>social-music-network</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>com.smn.app</groupId>
+  <groupId>com.smn.app.server</groupId>
   <artifactId>server</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>server</name>

@@ -1,7 +1,4 @@
-package musicss.server;
-
-import musicss.protocol.message.Request;
-import musicss.protocol.message.Response;
+package com.smn.app.server;
 
 import java.util.HashMap;
 

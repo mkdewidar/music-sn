@@ -1,12 +1,10 @@
-package musicss.client.scene;
+package com.smn.app.client.scene;
+
+import com.smn.app.client.control.LoginControl;
+import com.smn.app.client.event.AppEvent;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
-
-import musicss.client.control.LoginControl;
-import musicss.client.event.AppEvent;
-import musicss.protocol.message.Request;
-import musicss.protocol.message.Response;
 
 import java.net.URL;
 import java.util.ResourceBundle;

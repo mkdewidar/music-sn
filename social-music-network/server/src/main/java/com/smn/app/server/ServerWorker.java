@@ -1,8 +1,4 @@
-package musicss.server;
-
-import musicss.protocol.message.Request;
-import musicss.protocol.message.Response;
-import musicss.protocol.ProtocolImplementer;
+package com.smn.app.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +14,7 @@ public class ServerWorker implements Runnable {
     private Socket socket;
     private BufferedReader socketReader;
     private PrintStream socketPrintStream;
-    // The message obtained from or to be sent to the client, it's already in it's packed form
+    // The protocol obtained from or to be sent to the client, it's already in it's packed form
     private String packedMessage;
     private ProtocolImplementer protocol;
     private ServerController serverController;
@@ -51,7 +47,7 @@ public class ServerWorker implements Runnable {
 
             try {
                 packedMessage = socketReader.readLine();
-                // null is the only way we know we have been disconnected, it's not a message
+                // null is the only way we know we have been disconnected, it's not a protocol
                 if (packedMessage == null)
                     break;
             } catch (IOException e) {

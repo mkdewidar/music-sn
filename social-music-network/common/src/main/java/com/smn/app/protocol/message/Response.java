@@ -1,4 +1,4 @@
-package musicss.protocol.message;
+package com.smn.app.protocol.message;
 
 /**
  * A response that the server can give the client.

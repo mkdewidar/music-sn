@@ -1,8 +1,8 @@
-package musicss.client.scene;
+package com.smn.app.client.scene;
 
+import com.smn.app.client.control.FriendsListControl;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
-import musicss.client.control.FriendsListControl;
 
 import java.net.URL;
 import java.util.ResourceBundle;

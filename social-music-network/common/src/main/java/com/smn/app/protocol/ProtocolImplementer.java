@@ -1,11 +1,11 @@
-package musicss.protocol;
+package com.smn.app.protocol;
 
-import musicss.protocol.message.Request;
-import musicss.protocol.message.Response;
+import com.smn.app.protocol.message.Request;
+import com.smn.app.protocol.message.Response;
 
 /**
  * Class that implements the application layer protocol.
- * It converts a system message to a message ready to be sent over the network.
+ * It converts a system protocol to a protocol ready to be sent over the network.
  */
 public class ProtocolImplementer {
     /**
@@ -17,16 +17,16 @@ public class ProtocolImplementer {
         public static String OK = "OK";
         // The auth provided was incorrect
         public static String INVALIDAUTH = "invalidAuth";
-        // A void reply for a void/incorrect message
+        // A void reply for a void/incorrect protocol
         public static String VOID = "void";
     }
 
     /**
-     * Given a packed message, it unpacks it into a Request object to be used by the server.
-     * If the message has too few of the required fields (i.e missing data) then a @see musicss.protocol.Response.Void
+     * Given a packed protocol, it unpacks it into a Request object to be used by the server.
+     * If the protocol has too few of the required fields (i.e missing data) then a @see musicss.protocol.Response.Void
      *      will be returned by the function.
-     * @param msg The packed message to be unpacked.
-     * @return The unpacked message as a Request object.
+     * @param msg The packed protocol to be unpacked.
+     * @return The unpacked protocol as a Request object.
      */
     public Request unpackRequest(String msg) {
         Request clientRequest = new Request.Void();
@@ -59,9 +59,9 @@ public class ProtocolImplementer {
     }
 
     /**
-     * Given a packed message, it unpacks it into a Response object to be parsed by the client.
-     * @param msg The packed message to be unpacked.
-     * @return The unpacked message as a Response object.
+     * Given a packed protocol, it unpacks it into a Response object to be parsed by the client.
+     * @param msg The packed protocol to be unpacked.
+     * @return The unpacked protocol as a Response object.
      */
     public Response unpackResponse(String msg) {
         Response clientRequest = new Response.Void();
@@ -78,7 +78,7 @@ public class ProtocolImplementer {
     /**
      * Packs a response into the protocol complaint format.
      * @param response The response to be packed.
-     * @return The packed message that is ready to be sent.
+     * @return The packed protocol that is ready to be sent.
      */
     public String pack(Response response) {
         String reply = StatusCodes.VOID;
@@ -98,7 +98,7 @@ public class ProtocolImplementer {
     /**
      * Packs a request into the protocol complaint format.
      * @param request The request to be packed.
-     * @return The packed message that is ready to be sent.
+     * @return The packed protocol that is ready to be sent.
      */
     public String pack(Request request) {
         String reply = StatusCodes.VOID;

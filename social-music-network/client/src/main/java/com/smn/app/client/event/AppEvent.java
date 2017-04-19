@@ -1,4 +1,4 @@
-package musicss.client.event;
+package com.smn.app.client.event;
 
 import javafx.event.Event;
 import javafx.event.EventType;

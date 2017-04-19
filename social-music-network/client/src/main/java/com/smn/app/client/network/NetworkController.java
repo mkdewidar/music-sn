@@ -1,10 +1,6 @@
-package musicss.client.network;
+package com.smn.app.client.network;
 
 import javafx.beans.property.SimpleBooleanProperty;
-
-import musicss.protocol.ProtocolImplementer;
-import musicss.protocol.message.Request;
-import musicss.protocol.message.Response;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -77,7 +73,7 @@ public class NetworkController {
     public Response sendRequest(Request request) {
         String msg = protocol.pack(request);
         if (msg.equals(ProtocolImplementer.StatusCodes.VOID))
-            System.out.println("This message has been identified as VOID");
+            System.out.println("This protocol has been identified as VOID");
         Response response = new Response.Void();
 
         // It can be null if we never connected to the server to begin with

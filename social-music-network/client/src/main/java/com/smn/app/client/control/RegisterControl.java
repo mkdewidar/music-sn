@@ -1,4 +1,4 @@
-package musicss.client.control;
+package com.smn.app.client.control;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;

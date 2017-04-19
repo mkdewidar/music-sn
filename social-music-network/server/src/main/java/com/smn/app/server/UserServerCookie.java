@@ -1,4 +1,4 @@
-package musicss.server;
+package com.smn.app.server;
 
 /**
  * Data about the current logged in users.
