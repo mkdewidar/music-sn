@@ -14,18 +14,19 @@ import java.net.Socket;
  * Represents a thread that serves one single client.
  */
 public class ServerWorker implements Runnable {
+
     private Socket socket;
     private BufferedReader socketReader;
     private PrintStream socketPrintStream;
     // The message obtained from or to be sent to the client, it's already in it's packed form
     private String packedMessage;
     private ProtocolImplementer protocol;
-    private Executor executor;
+    private ServerController serverController;
 
     public ServerWorker(Socket clientSocket) throws IOException {
         ServeClient(clientSocket);
         protocol = new ProtocolImplementer();
-        executor = new Executor();
+        serverController = new ServerController();
     }
 
     /**
@@ -60,7 +61,7 @@ public class ServerWorker implements Runnable {
 
             Request clientRequest = protocol.unpackRequest(packedMessage);
 
-            Response response = executor.process(clientRequest);
+            Response response = serverController.process(clientRequest);
 
             packedMessage = protocol.pack(response);
             socketPrintStream.println(packedMessage);

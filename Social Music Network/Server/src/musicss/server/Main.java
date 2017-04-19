@@ -2,7 +2,7 @@ package musicss.server;
 
 import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.HashMap;
 
 /**
  * Server entry point.
@@ -20,6 +20,8 @@ public class Main {
             System.err.println("ERROR: Can't create server socket\n\t" + e.getMessage());
             return;
         }
+
+        ServerController.serverCookies = new HashMap<>();
 
         while (isRunning) {
             System.out.println("Awaiting client connection...");

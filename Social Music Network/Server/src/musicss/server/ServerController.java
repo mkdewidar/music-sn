@@ -1,12 +1,21 @@
 package musicss.server;
 
+import musicss.protocol.UserServerCookie;
 import musicss.protocol.message.Request;
 import musicss.protocol.message.Response;
+
+import java.util.HashMap;
 
 /**
  * The class that executes the requests and deals with the server logic.
  */
-public class Executor {
+public class ServerController {
+
+    // All the server cookies for all currently logged in users.
+    public static HashMap<String, UserServerCookie> serverCookies;
+    public static DatabaseInterface database;
+
+    private UserServerCookie userServerCookie;
 
     /**
      * Processes the request object provided.
@@ -20,10 +29,17 @@ public class Executor {
             case LOGIN:
                 Request.Login loginRequest = (Request.Login)request;
                 if (loginRequest.username.contains("asd") && loginRequest.password.contains("asd"))
+                {
                     response = new Response.Ok();
+
+                    userServerCookie.id = loginRequest.username;
+                    userServerCookie.auth = loginRequest.password;
+                    // TODO: timestamp the user login and register their IP
+                }
                 else
+                {
                     response = new Response.InvalidAuth();
-                // TODO: timestamp the user login and register their IP
+                }
                 break;
             case REGISTER:
                 // TODO: register the user
