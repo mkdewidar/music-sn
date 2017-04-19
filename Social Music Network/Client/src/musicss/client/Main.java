@@ -43,6 +43,8 @@ public class Main extends Application {
             loadLoginScene();
         });
 
+        networkController.connect();
+
         System.out.println("Application ready...");
     }
 
