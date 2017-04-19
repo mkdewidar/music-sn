@@ -1,5 +1,9 @@
 package com.smn.app.client.network;
 
+import com.smn.app.protocol.ProtocolImplementer;
+import com.smn.app.protocol.message.Request;
+import com.smn.app.protocol.message.Response;
+
 import javafx.beans.property.SimpleBooleanProperty;
 
 import java.io.BufferedReader;

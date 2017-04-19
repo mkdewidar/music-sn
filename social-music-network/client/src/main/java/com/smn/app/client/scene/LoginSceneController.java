@@ -3,6 +3,9 @@ package com.smn.app.client.scene;
 import com.smn.app.client.control.LoginControl;
 import com.smn.app.client.event.AppEvent;
 
+import com.smn.app.protocol.message.Request;
+import com.smn.app.protocol.message.Response;
+
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 

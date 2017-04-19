@@ -2,6 +2,7 @@ package com.smn.app.server;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.HashMap;
 
 /**
  * Server entry point.
