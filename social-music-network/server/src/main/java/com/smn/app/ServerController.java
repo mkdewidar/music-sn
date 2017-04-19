@@ -1,6 +1,5 @@
 package musicss.server;
 
-import musicss.protocol.UserServerCookie;
 import musicss.protocol.message.Request;
 import musicss.protocol.message.Response;
 
