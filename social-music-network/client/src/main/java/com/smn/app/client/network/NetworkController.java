@@ -6,8 +6,6 @@ import com.smn.app.protocol.ProtocolImplementer;
 import com.smn.app.protocol.message.Request;
 import com.smn.app.protocol.message.Response;
 
-import javafx.beans.property.SimpleBooleanProperty;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,8 +19,9 @@ import java.net.Socket;
 public class NetworkController {
     public static NetworkController instance = new NetworkController();
 
-    public SimpleBooleanProperty isConnected;
     public SceneController sceneController;
+
+    private boolean isConnected;
 
     private Socket socket;
     private PrintStream outputStream;
@@ -35,7 +34,6 @@ public class NetworkController {
         instance = this;
         protocol = new ProtocolImplementer();
         socket = new Socket();
-        isConnected = new SimpleBooleanProperty(false);
 
         listenerThread = new Thread(new ListenerThread());
     }
@@ -62,8 +60,13 @@ public class NetworkController {
                     break;
                 }
             }
-            isConnected.set(false);
+            isConnected = false;
+            sceneController.setNetworkConnected(false);
         }
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 
     /**
@@ -95,7 +98,8 @@ public class NetworkController {
             outputStream = new PrintStream(socket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            isConnected.set(true);
+            isConnected = true;
+            sceneController.setNetworkConnected(true);
 
             listenerThread.start();
             System.out.println("Successfully connected to the server.");

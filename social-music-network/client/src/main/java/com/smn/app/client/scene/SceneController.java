@@ -4,6 +4,7 @@ import com.smn.app.client.control.StatusControl;
 import com.smn.app.client.network.NetworkController;
 
 import com.smn.app.protocol.message.Response;
+
 import javafx.fxml.Initializable;
 
 import java.net.URL;
@@ -22,13 +23,14 @@ public class SceneController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         statusBanner = new StatusControl();
         networkController = NetworkController.instance;
-        // Updates the status banner as per the is connected variable
-        networkController.isConnected.addListener((event) -> {
-            statusBanner.setConnected(networkController.isConnected.get());
-        });
+        setNetworkConnected(networkController.isConnected());
         networkController.sceneController = this;
     }
 
     public void handleServerEvent(Response event) {
+    }
+
+    public void setNetworkConnected(boolean connected) {
+        statusBanner.setConnected(connected);
     }
 }
