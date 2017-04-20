@@ -12,9 +12,13 @@ public class ServerController {
 
     // All the server cookies for all currently logged in users.
     public static HashMap<String, UserServerCookie> serverCookies;
-    public static DatabaseInterface database;
+    public DatabaseInterface database;
 
     private UserServerCookie userServerCookie;
+
+    public ServerController() {
+        database = new DatabaseInterface();
+    }
 
     /**
      * Processes the request object provided.
@@ -27,23 +31,36 @@ public class ServerController {
         switch (request.type) {
             case LOGIN:
                 Request.Login loginRequest = (Request.Login)request;
-                if (loginRequest.username.contains("asd") && loginRequest.password.contains("asd"))
-                {
+                if (database.authenticateLogin(loginRequest.username, loginRequest.password)) {
                     response = new Response.Ok();
 
-                    userServerCookie = new UserServerCookie(loginRequest.username, loginRequest.password);
-                    // TODO: timestamp the user login and register their IP
+                    Login(loginRequest.username, loginRequest.password);
                 }
-                else
-                {
+                else {
                     response = new Response.InvalidAuth();
                 }
                 break;
             case REGISTER:
-                // TODO: register the user
+                Request.Register registerRequest = (Request.Register)request;
+                if (database.registerUser(registerRequest.username, registerRequest.password,
+                        registerRequest.name, registerRequest.email)) {
+                    response = new Response.Ok();
+
+                    Login(registerRequest.username, registerRequest.password);
+                }
                 break;
         }
 
         return response;
+    }
+
+    /**
+     * Log a user into the system.
+     * @param username The id of the user.
+     * @param password The authentication token of the user.
+     */
+    private void Login(String username, String password) {
+        userServerCookie = new UserServerCookie(username, password);
+        // TODO: timestamp the user login and register their IP
     }
 }

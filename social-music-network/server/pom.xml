@@ -20,6 +20,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
         <configuration>
           <mainClass>com.smn.app.server.Main</mainClass>
         </configuration>
@@ -31,6 +32,11 @@
       <groupId>com.smn.app.protocol</groupId>
       <artifactId>protocol</artifactId>
       <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver</artifactId>
+      <version>3.4.2</version>
     </dependency>
   </dependencies>
 </project>

@@ -45,6 +45,7 @@ public class NetworkController {
     private class ListenerThread implements Runnable {
         @Override
         public void run() {
+            System.out.println("Listener thread started...");
             String msg = "";
             while (msg != null) {
                 try {
@@ -62,6 +63,7 @@ public class NetworkController {
             }
             isConnected = false;
             sceneController.setNetworkConnected(false);
+            System.out.println("Listener thread killed...");
         }
     }
 
@@ -101,6 +103,9 @@ public class NetworkController {
             isConnected = true;
             sceneController.setNetworkConnected(true);
 
+            // calling start on a thread which it had been called on before throws
+            // an exception, so we just create a new one anyway
+            listenerThread = new Thread(new ListenerThread());
             listenerThread.start();
             System.out.println("Successfully connected to the server.");
         } catch (IOException e) {
