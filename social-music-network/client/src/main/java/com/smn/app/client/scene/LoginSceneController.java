@@ -6,6 +6,7 @@ import com.smn.app.client.event.AppEvent;
 import com.smn.app.protocol.message.Request;
 import com.smn.app.protocol.message.Response;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 
@@ -44,8 +45,10 @@ public class LoginSceneController extends SceneController {
     public void handleServerEvent(Response event) {
         switch (event.type) {
             case OK:
-                AppEvent.Login login = new AppEvent.Login();
-                rootNode.fireEvent(login);
+                Platform.runLater(() -> {
+                    AppEvent.Login login = new AppEvent.Login();
+                    rootNode.fireEvent(login);
+                });
                 break;
             case INVALIDAUTH:
                 loginForm.setInvalidLogin();

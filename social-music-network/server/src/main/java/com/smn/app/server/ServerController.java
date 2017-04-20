@@ -31,8 +31,7 @@ public class ServerController {
                 {
                     response = new Response.Ok();
 
-                    userServerCookie.id = loginRequest.username;
-                    userServerCookie.auth = loginRequest.password;
+                    userServerCookie = new UserServerCookie(loginRequest.username, loginRequest.password);
                     // TODO: timestamp the user login and register their IP
                 }
                 else

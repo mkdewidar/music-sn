@@ -73,7 +73,7 @@ public class Main extends Application {
     private void loadAppScene() {
         Parent rootNode;
         try {
-            rootNode = FXMLLoader.load(getClass().getResource("AppSceneRoot.fxml"));
+            rootNode = FXMLLoader.load(getClass().getResource("/AppSceneRoot.fxml"));
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't load app root node\n\t" + e.getMessage() + "\n");
             e.printStackTrace();
