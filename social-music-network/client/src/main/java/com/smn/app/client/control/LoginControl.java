@@ -36,7 +36,7 @@ public class LoginControl extends VBox {
      */
     public LoginControl(LoginSceneController loginController) {
         // The fxml file has all the layout and structural information for the buttons and fields
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginControl.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/LoginControl.fxml"));
         fxmlLoader.setController(this);
         fxmlLoader.setRoot(this);
 

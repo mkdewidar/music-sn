@@ -26,7 +26,7 @@ public class RegisterControl extends VBox {
     protected Button registerButton;
 
     public RegisterControl() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("RegisterControl.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/RegisterControl.fxml"));
         fxmlLoader.setController(this);
         fxmlLoader.setRoot(this);
 

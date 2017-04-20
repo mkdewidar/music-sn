@@ -54,7 +54,8 @@ public class Main extends Application {
     private void loadLoginScene() {
         Parent rootNode;
         try {
-            rootNode = FXMLLoader.load(getClass().getResource("LoginSceneRoot.fxml"));
+            System.out.println(getClass().getResource("/LoginSceneRoot.fxml"));
+            rootNode = FXMLLoader.load(getClass().getResource("/LoginSceneRoot.fxml"));
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't load login root node\n\t" + e.getMessage() + "\n");
             e.printStackTrace();

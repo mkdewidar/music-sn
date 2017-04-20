@@ -16,7 +16,7 @@ public class StatusControl extends HBox {
     protected Button reconnectButton;
 
     public StatusControl() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("StatusControl.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/StatusControl.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

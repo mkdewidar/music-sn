@@ -4,5 +4,5 @@
 
 <!-- The root of the scene, this will always be here -->
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="musicss.client.scene.LoginSceneController" fx:id="rootNode">
+            fx:controller="com.smn.app.client.scene.AppSceneController" fx:id="rootNode">
 </BorderPane>
