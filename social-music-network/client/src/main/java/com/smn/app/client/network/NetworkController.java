@@ -1,5 +1,7 @@
 package com.smn.app.client.network;
 
+import com.smn.app.client.scene.SceneController;
+
 import com.smn.app.protocol.ProtocolImplementer;
 import com.smn.app.protocol.message.Request;
 import com.smn.app.protocol.message.Response;
@@ -20,17 +22,48 @@ public class NetworkController {
     public static NetworkController instance = new NetworkController();
 
     public SimpleBooleanProperty isConnected;
+    public SceneController sceneController;
 
     private Socket socket;
     private PrintStream outputStream;
     private BufferedReader inputStream;
     private ProtocolImplementer protocol;
 
+    private Thread listenerThread;
+
     private NetworkController() {
         instance = this;
         protocol = new ProtocolImplementer();
         socket = new Socket();
         isConnected = new SimpleBooleanProperty(false);
+
+        listenerThread = new Thread(new ListenerThread());
+    }
+
+    /**
+     * A Runnable which listens for any messages from the server and notifies the
+     * controller when they arrive.
+     */
+    private class ListenerThread implements Runnable {
+        @Override
+        public void run() {
+            String msg = "";
+            while (msg != null) {
+                try {
+                    msg = inputStream.readLine();
+
+                    Response serverEvent =  protocol.unpackResponse(msg);
+                    if (serverEvent.type == Response.Types.VOID)
+                        System.err.println("ERROR: This server event has been identified as VOID.");
+
+                    sceneController.handleServerEvent(serverEvent);
+                } catch (IOException e) {
+                    System.err.println("ERROR: Lost connection with server\n\t" + e.getMessage());
+                    break;
+                }
+            }
+            isConnected.set(false);
+        }
     }
 
     /**
@@ -43,6 +76,10 @@ public class NetworkController {
             if (outputStream != null) {
                 outputStream.close();
             }
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            listenerThread.interrupt();
         } catch (IOException e) {
             System.err.println("ERROR: An IO error occurred while closing resources\n\t" + e.getMessage());
         }
@@ -60,6 +97,7 @@ public class NetworkController {
 
             isConnected.set(true);
 
+            listenerThread.start();
             System.out.println("Successfully connected to the server.");
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't connect to server or get stream\n\t" + e.getMessage());
@@ -68,56 +106,21 @@ public class NetworkController {
     }
 
     /**
-     * Parses a given request and sends it over to the server, returns the response from the server.
+     * Parses a given clientEvent and sends it over to the server, returns the response from the server.
      *
-     * @param request The request to be sent over the network.
+     * @param clientEvent The clientEvent to be sent over the network.
      *
-     * @return The response for the request made.
+     * @return The response for the clientEvent made.
      */
-    public Response sendRequest(Request request) {
-        String msg = protocol.pack(request);
+    public void sendRequest(Request clientEvent) {
+        String msg = protocol.pack(clientEvent);
         if (msg.equals(ProtocolImplementer.StatusCodes.VOID))
-            System.out.println("This protocol has been identified as VOID");
-        Response response = new Response.Void();
+            System.err.println("ERROR: This client event is VOID");
 
         // It can be null if we never connected to the server to begin with
         if (outputStream != null)
         {
             outputStream.println(msg);
-
-            response = getResponse();
-        } else {
-            isConnected.set(false);
         }
-
-        return response;
-    }
-
-    /**
-     * Returns the response that just arrived.
-     *
-     * @return The response from the server
-     */
-    public Response getResponse() {
-        Response response = new Response.Void();
-
-        try {
-            String msg = inputStream.readLine();
-            if (msg == null) {
-                isConnected.set(false);
-            } else {
-                response = protocol.unpackResponse(msg);
-
-                if (response.type == Response.Types.VOID)
-                    System.out.println("This response has been identified as VOID");
-            }
-        } catch (IOException e) {
-            System.err.println("ERROR: Couldn't read response" + e.getMessage());
-            e.printStackTrace();
-
-            isConnected.set(false);
-        }
-
-        return response;
     }
 }

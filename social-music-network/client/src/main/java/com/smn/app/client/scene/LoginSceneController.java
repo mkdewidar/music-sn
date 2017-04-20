@@ -37,13 +37,19 @@ public class LoginSceneController extends SceneController {
         loginRequest.username = username;
         loginRequest.password = password;
 
-        Response response = this.networkController.sendRequest(loginRequest);
+        this.networkController.sendRequest(loginRequest);
+    }
 
-        if (response.type == Response.Types.OK) {
-            AppEvent.Login login = new AppEvent.Login();
-            rootNode.fireEvent(login);
-        } else if (response.type == Response.Types.INVALIDAUTH) {
-            loginForm.setInvalidLogin();
+    @Override
+    public void handleServerEvent(Response event) {
+        switch (event.type) {
+            case OK:
+                AppEvent.Login login = new AppEvent.Login();
+                rootNode.fireEvent(login);
+                break;
+            case INVALIDAUTH:
+                loginForm.setInvalidLogin();
+                break;
         }
     }
 }
