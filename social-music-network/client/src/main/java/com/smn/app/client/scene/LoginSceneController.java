@@ -1,6 +1,7 @@
 package com.smn.app.client.scene;
 
 import com.smn.app.client.control.LoginControl;
+import com.smn.app.client.control.RegisterControl;
 import com.smn.app.client.event.AppEvent;
 
 import com.smn.app.protocol.message.Request;
@@ -19,26 +20,42 @@ import java.util.ResourceBundle;
 public class LoginSceneController extends SceneController {
     @FXML
     protected BorderPane rootNode;
-
+    @FXML
     protected LoginControl loginForm;
+    @FXML
+    protected RegisterControl registerForm;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
 
-        loginForm = new LoginControl(this);
+        rootNode.setTop(statusBanner);
 
-        rootNode.setCenter(loginForm);
-        rootNode.setTop(this.statusBanner);
+        loginForm.addOnLogin((event) -> {
+            validateLogin(loginForm.getUsername(), loginForm.getPassword());
+        });
+        registerForm.addOnRegister((event) -> {
+            registerUser(registerForm.getName(), registerForm.getUsername(),
+                    registerForm.getPassword(), registerForm.getEmail());
+        });
     }
 
     public void validateLogin(String username, String password) {
-
         Request.Login loginRequest = new Request.Login();
         loginRequest.username = username;
         loginRequest.password = password;
 
         this.networkController.sendRequest(loginRequest);
+    }
+
+    public void registerUser(String name, String userId, String pass, String email) {
+        Request.Register registerRequest = new Request.Register();
+        registerRequest.username = userId;
+        registerRequest.password = pass;
+        registerRequest.email = email;
+        registerRequest.name = name;
+
+        this.networkController.sendRequest(registerRequest);
     }
 
     @Override

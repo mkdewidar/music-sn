@@ -7,7 +7,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root alignment="CENTER_LEFT" spacing="5.0" type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.121">
+<fx:root alignment="CENTER_LEFT" spacing="5.0" type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml/1"
+         xmlns="http://javafx.com/javafx/8.0.121">
     <children>
         <Label fx:id="invalidLoginLabel" managed="false" text="Invalid Username or Password" textFill="RED" visible="false" />
 
@@ -21,6 +22,6 @@
     </children>
 
     <padding>
-        <Insets left="50.0" />
+        <Insets left="50.0" right="25.0"/>
     </padding>
 </fx:root>

@@ -1,15 +1,13 @@
 package com.smn.app.client.control;
 
-import com.smn.app.client.scene.LoginSceneController;
-
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -27,14 +25,11 @@ public class LoginControl extends VBox {
     @FXML
     protected Label invalidLoginLabel;
 
-    protected LoginSceneController controller;
-
     /**
      * Constructor for the Login Control, it requires a @see musicss.client.scene.LoginSceneController as it
      *      depends on it to validate the login information.
-     * @param loginController The login controller that this login control will depend on.
      */
-    public LoginControl(LoginSceneController loginController) {
+    public LoginControl() {
         // The fxml file has all the layout and structural information for the buttons and fields
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/LoginControl.fxml"));
         fxmlLoader.setController(this);
@@ -48,23 +43,10 @@ public class LoginControl extends VBox {
             Platform.exit();
             return;
         }
-
-        controller = loginController;
-
-        loginButton.setOnAction((event) -> {
-            loginSubmit();
-        });
-        loginButton.setOnKeyPressed((event) -> {
-            if (event.getCode() == KeyCode.ENTER)
-                loginSubmit();
-        });
     }
 
-    /**
-     * Logs in the user by asking the controller to validate the results.
-     */
-    protected void loginSubmit() {
-        controller.validateLogin(usernameField.getText(), passwordField.getText());
+    public void addOnLogin(EventHandler eventHandler) {
+        loginButton.setOnAction(eventHandler);
     }
 
     public void setInvalidLogin() {

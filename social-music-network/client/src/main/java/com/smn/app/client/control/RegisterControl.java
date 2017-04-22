@@ -1,6 +1,7 @@
 package com.smn.app.client.control;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -38,9 +39,25 @@ public class RegisterControl extends VBox {
             Platform.exit();
             return;
         }
+    }
 
-        registerButton.setOnAction((event) -> {
-            // TODO: register the user
-        });
+    public void addOnRegister(EventHandler eventHandler) {
+        registerButton.setOnAction(eventHandler);
+    }
+
+    public String getName() {
+        return nameField.getText();
+    }
+
+    public String getUsername() {
+        return usernameField.getText();
+    }
+
+    public String getPassword() {
+        return passwordField.getText();
+    }
+
+    public String getEmail() {
+        return emailField.getText();
     }
 }
