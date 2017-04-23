@@ -1,8 +1,9 @@
 package com.smn.app.client.scene;
 
 import com.smn.app.client.control.FriendsListControl;
+
 import javafx.fxml.FXML;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -12,16 +13,10 @@ import java.util.ResourceBundle;
  */
 public class AppSceneController extends SceneController {
     @FXML
-    protected BorderPane rootNode;
-
-    protected FriendsListControl friendsList;
+    protected VBox rootNode;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-
-        rootNode.setTop(statusBanner);
-        friendsList = new FriendsListControl(this);
-        rootNode.setLeft(friendsList);
     }
 }

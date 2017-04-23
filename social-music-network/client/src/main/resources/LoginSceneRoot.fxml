@@ -5,15 +5,15 @@
 <?import com.smn.app.client.control.LoginControl?>
 <?import com.smn.app.client.control.RegisterControl?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import com.smn.app.client.control.StatusControl?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.smn.app.client.scene.LoginSceneController"
-            fx:id="rootNode">
-   <center>
-       <HBox>
-           <LoginControl fx:id="loginForm" />
-           <Separator orientation="VERTICAL" prefHeight="200.0" BorderPane.alignment="CENTER" />
-           <RegisterControl fx:id="registerForm" />
-       </HBox>
-   </center>
-</BorderPane>
+<VBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.smn.app.client.scene.LoginSceneController" fx:id="rootNode">
+    <StatusControl fx:id="statusBanner" />
+    <HBox>
+       <LoginControl fx:id="loginForm" />
+       <Separator orientation="VERTICAL" prefHeight="200.0" BorderPane.alignment="CENTER" />
+       <RegisterControl fx:id="registerForm" />
+    </HBox>
+</VBox>

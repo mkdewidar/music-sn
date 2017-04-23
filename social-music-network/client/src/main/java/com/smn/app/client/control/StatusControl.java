@@ -1,6 +1,6 @@
 package com.smn.app.client.control;
 
-import com.smn.app.client.network.NetworkController;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -22,14 +22,14 @@ public class StatusControl extends HBox {
 
         try {
             fxmlLoader.load();
-
-            reconnectButton.setOnAction((event) -> {
-                NetworkController.instance.connect();
-            });
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't load the Status fxml file\n\t" + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void setOnReconnect(EventHandler eventHandler) {
+        reconnectButton.setOnAction(eventHandler);
     }
 
     public void setConnected(boolean connected) {

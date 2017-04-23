@@ -9,7 +9,6 @@ import com.smn.app.protocol.message.ServerEvent;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,8 +18,6 @@ import java.util.ResourceBundle;
  */
 public class LoginSceneController extends SceneController {
     @FXML
-    protected BorderPane rootNode;
-    @FXML
     protected LoginControl loginForm;
     @FXML
     protected RegisterControl registerForm;
@@ -28,8 +25,6 @@ public class LoginSceneController extends SceneController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-
-        rootNode.setTop(statusBanner);
 
         loginForm.addOnLogin((event) -> {
             validateLogin(loginForm.getUsername(), loginForm.getPassword());
