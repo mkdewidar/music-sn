@@ -34,6 +34,7 @@ public class Main extends Application {
         loadLoginScene();
 
         primaryStage.setScene(mainScene);
+        primaryStage.setTitle("Music Social Network");
         primaryStage.show();
 
         primaryStage.addEventHandler(AppEvent.Login.Type, (event) -> {
@@ -63,7 +64,7 @@ public class Main extends Application {
             return;
         }
 
-        mainScene = new Scene(rootNode, 600, 500);
+        mainScene = new Scene(rootNode);
         stage.setScene(mainScene);
     }
 
@@ -81,7 +82,7 @@ public class Main extends Application {
             return;
         }
 
-        mainScene = new Scene(rootNode, 600, 500);
+        mainScene = new Scene(rootNode);
         stage.setScene(mainScene);
     }
 

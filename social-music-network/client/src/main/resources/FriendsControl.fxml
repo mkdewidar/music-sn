@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+   <TextField fx:id="friendSearchField" promptText="Find Friends"/>
+   <ListView fx:id="friendListView" />
+</fx:root>

@@ -9,7 +9,7 @@
 <?import com.smn.app.client.control.StatusControl?>
 
 <VBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.smn.app.client.scene.LoginSceneController" fx:id="rootNode">
+      fx:controller="com.smn.app.client.scene.LoginSceneController" fx:id="rootNode" prefWidth="600" prefHeight="500">
     <StatusControl fx:id="statusBanner" />
     <HBox>
        <LoginControl fx:id="loginForm" />

@@ -3,7 +3,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import com.smn.app.client.control.StatusControl?>
 
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import com.smn.app.client.control.FriendsControl?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.smn.app.client.scene.AppSceneController" fx:id="rootNode">
+      fx:controller="com.smn.app.client.scene.AppSceneController" fx:id="rootNode" prefWidth="750" prefHeight="550">
     <StatusControl fx:id="statusBanner" />
+    <SplitPane dividerPositions="0.25, 0.75" VBox.vgrow="ALWAYS">
+        <items>
+            <AnchorPane>
+            </AnchorPane>
+            <AnchorPane>
+            </AnchorPane>
+            <FriendsControl fx:id="friendsControl" />
+        </items>
+    </SplitPane>
 </VBox>
