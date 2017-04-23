@@ -9,6 +9,7 @@ public abstract class ClientEvent {
         REGISTER,
         FRIENDSLIST,
         FRIENDREQUEST,
+        USERSEARCH,
         VOID
     }
 
@@ -58,6 +59,17 @@ public abstract class ClientEvent {
 
         public FriendRequest() {
             type = Types.FRIENDREQUEST;
+        }
+    }
+
+    /**
+     * Signals a client wanting to search for a user.
+     */
+    public static class UserSearch extends ClientEvent {
+        public String searchString;
+
+        public UserSearch() {
+            type = Types.USERSEARCH;
         }
     }
 

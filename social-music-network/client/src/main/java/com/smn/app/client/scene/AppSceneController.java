@@ -3,6 +3,7 @@ package com.smn.app.client.scene;
 import com.smn.app.client.control.FriendsControl;
 import com.smn.app.protocol.message.ClientEvent;
 import com.smn.app.protocol.message.ServerEvent;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 
@@ -37,17 +38,33 @@ public class AppSceneController extends SceneController {
         switch (event.type) {
             case USERFRIENDS:
                 ServerEvent.UserFriends userFriends = (ServerEvent.UserFriends) event;
-                List friendList = new ArrayList();
+                ArrayList<String> friendList = new ArrayList<>();
                 if (userFriends.friends[0].equals("")) {
                     friendList.add("No Friends Yet!");
                 } else {
-                    friendList = Arrays.asList(userFriends.friends);
+                    friendList.addAll(Arrays.asList(userFriends.friends));
                 }
-                friendsControl.setFriendsList(friendList);
+
+                Platform.runLater(() -> {
+                    friendsControl.setFriendsList(friendList);
+                });
+                break;
+            case FRIENDSEARCH:
+                ServerEvent.FriendSearch friendSearch = (ServerEvent.FriendSearch) event;
+                ArrayList<String> results = new ArrayList();
+                results.addAll(Arrays.asList(friendSearch.results));
+
+                Platform.runLater(() -> {
+                    friendsControl.setSearchResults(results);
+                });
                 break;
         }
     }
 
     private void searchForUser(String searchString) {
+        ClientEvent.UserSearch userSearch = new ClientEvent.UserSearch();
+        userSearch.searchString = searchString;
+
+        this.networkController.sendRequest(userSearch);
     }
 }

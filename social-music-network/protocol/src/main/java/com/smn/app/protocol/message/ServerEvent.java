@@ -9,6 +9,7 @@ public class ServerEvent {
         INVALIDAUTH,
         INVALIDREG,
         USERFRIENDS,
+        FRIENDSEARCH,
         VOID
     }
 
@@ -67,6 +68,17 @@ public class ServerEvent {
 
         public UserFriends() {
             type = Types.USERFRIENDS;
+        }
+    }
+
+    /**
+     * The results of a search for another user.
+     */
+    public static class FriendSearch extends ServerEvent {
+        public String[] results;
+
+        public FriendSearch() {
+            type = Types.FRIENDSEARCH;
         }
     }
 }

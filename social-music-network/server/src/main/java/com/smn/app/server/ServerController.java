@@ -51,12 +51,19 @@ public class ServerController {
                 }
                 break;
             case FRIENDSLIST:
-                ClientEvent.FriendsList friendsList = (ClientEvent.FriendsList) clientEvent;
-
                 ServerEvent.UserFriends userFriends = new ServerEvent.UserFriends();
                 userFriends.friends = database.getFriends(userServerCookie.id);
 
                 serverEvent = userFriends;
+                break;
+            case USERSEARCH:
+                ClientEvent.UserSearch userSearch = (ClientEvent.UserSearch) clientEvent;
+
+                ServerEvent.FriendSearch friendSearch = new ServerEvent.FriendSearch();
+                friendSearch.results = database.searchUsers(userServerCookie.id, userSearch.searchString);
+
+                serverEvent = friendSearch;
+
                 break;
         }
 

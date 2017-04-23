@@ -57,11 +57,17 @@ public class ProtocolImplementer {
             }
         } else if (msg.equals("friends")) {
             ClientEvent.FriendsList friendsRequest = new ClientEvent.FriendsList();
-
             clientEvent = friendsRequest;
         } else if (msg.startsWith("frequest:")) {
             ClientEvent.FriendRequest friendRequest = new ClientEvent.FriendRequest();
             friendRequest.username = msg.substring(9).split(",")[0];
+
+            clientEvent = friendRequest;
+        } else if (msg.startsWith("fsearch:")) {
+            ClientEvent.UserSearch userSearch = new ClientEvent.UserSearch();
+            userSearch.searchString = msg.substring(8);
+
+            clientEvent = userSearch;
         }
 
         return clientEvent;
@@ -84,7 +90,13 @@ public class ProtocolImplementer {
         } else if (msg.startsWith("friends:")) {
             ServerEvent.UserFriends friendListEvent = new ServerEvent.UserFriends();
             friendListEvent.friends = msg.substring(8).split(",");
+
             serverEvent = friendListEvent;
+        } else if (msg.startsWith("fsearch:")) {
+            ServerEvent.FriendSearch friendSearch = new ServerEvent.FriendSearch();
+            friendSearch.results = msg.substring(8).split(",");
+
+            serverEvent = friendSearch;
         }
 
         return serverEvent;
@@ -113,7 +125,16 @@ public class ProtocolImplementer {
                 msg = "friends:";
                 if (friendsListEvent.friends != null) {
                     for (String friend : friendsListEvent.friends) {
-                        msg += friend;
+                        msg += friend + ",";
+                    }
+                }
+                break;
+            case FRIENDSEARCH:
+                ServerEvent.FriendSearch friendSearch = (ServerEvent.FriendSearch) serverEvent;
+                msg = "fsearch:";
+                if (friendSearch.results != null) {
+                    for (String user : friendSearch.results) {
+                        msg += user + ",";
                     }
                 }
                 break;
@@ -147,6 +168,10 @@ public class ProtocolImplementer {
             case FRIENDREQUEST:
                 ClientEvent.FriendRequest friendRequest = (ClientEvent.FriendRequest) clientEvent;
                 msg = "frequest:" + friendRequest.username;
+                break;
+            case USERSEARCH:
+                ClientEvent.UserSearch userSearch = (ClientEvent.UserSearch) clientEvent;
+                msg = "fsearch:" + userSearch.searchString;
                 break;
         }
 

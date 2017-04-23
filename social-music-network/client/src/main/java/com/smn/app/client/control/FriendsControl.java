@@ -58,6 +58,14 @@ public class FriendsControl extends VBox {
     }
 
     /**
+     * Set's the results of a search and automatically views it.
+     * @param items The list of search results.
+     */
+    public void setSearchResults(List items) {
+        listItems.setAll(items);
+    }
+
+    /**
      * Sets an event handler to be called when the user attempts to search for someone.
      * @param eventHandler The handler to be called.
      */
