@@ -3,7 +3,7 @@ package com.smn.app.protocol.message;
 /**
  * A response that the server can give the client.
  */
-public class Response {
+public class ServerEvent {
     public enum Types {
         OK,
         INVALIDAUTH,
@@ -11,12 +11,12 @@ public class Response {
         VOID
     }
 
-    public Response.Types type;
+    public ServerEvent.Types type;
 
     /**
      * Sent by the server when the request has been completed and there is no data to return.
      */
-    public static class Ok extends Response {
+    public static class Ok extends ServerEvent {
         // if any other data needs to be sent with the confirmation
         public String meta = "";
 
@@ -28,7 +28,7 @@ public class Response {
     /**
      * Represents an incorrect request was sent by the client.
      */
-    public static class Void extends Response {
+    public static class Void extends ServerEvent {
         public String meta = "";
 
         public Void() {
@@ -39,7 +39,7 @@ public class Response {
     /**
      * Represents a failed authentication, the username and password are not valid.
      */
-    public static class InvalidAuth extends Response {
+    public static class InvalidAuth extends ServerEvent {
         public String desc = "";
 
         public InvalidAuth() {
@@ -50,7 +50,7 @@ public class Response {
     /**
      * Represents a failed user registration, one of the fields is not valid.
      */
-    public static class InvalidReg extends Response {
+    public static class InvalidReg extends ServerEvent {
         public String desc = "";
 
         public InvalidReg() {

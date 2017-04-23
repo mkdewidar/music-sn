@@ -1,8 +1,8 @@
 package com.smn.app.server;
 
 import com.smn.app.protocol.ProtocolImplementer;
-import com.smn.app.protocol.message.Request;
-import com.smn.app.protocol.message.Response;
+import com.smn.app.protocol.message.ClientEvent;
+import com.smn.app.protocol.message.ServerEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,11 +59,11 @@ public class ServerWorker implements Runnable {
                 break;
             }
 
-            Request clientRequest = protocol.unpackRequest(packedMessage);
+            ClientEvent clientClientEvent = protocol.unpackClientEvent(packedMessage);
 
-            Response response = serverController.process(clientRequest);
+            ServerEvent serverEvent = serverController.process(clientClientEvent);
 
-            packedMessage = protocol.pack(response);
+            packedMessage = protocol.pack(serverEvent);
             socketPrintStream.println(packedMessage);
         }
 

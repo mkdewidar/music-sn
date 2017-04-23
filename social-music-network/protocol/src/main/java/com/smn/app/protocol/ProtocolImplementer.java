@@ -1,19 +1,19 @@
 package com.smn.app.protocol;
 
-import com.smn.app.protocol.message.Request;
-import com.smn.app.protocol.message.Response;
+import com.smn.app.protocol.message.ClientEvent;
+import com.smn.app.protocol.message.ServerEvent;
 
 /**
  * Class that implements the application layer protocol.
- * It converts a system protocol to a protocol ready to be sent over the network.
+ * It converts a system event to a message ready to be sent over the network.
  */
 public class ProtocolImplementer {
     /**
      * A set of ready static objects that represent certain status'.
-     * Useful for saving processing time when checking the status of a response/request.
+     * Useful for saving processing time when checking the status of an event.
      */
     public static class StatusCodes {
-        // Request was good and has been processed
+        // ClientEvent was good and has been processed
         public static String OK = "OK";
         // The auth provided was incorrect
         public static String INVALIDAUTH = "invalidAuth";
@@ -24,27 +24,27 @@ public class ProtocolImplementer {
     }
 
     /**
-     * Given a packed protocol, it unpacks it into a Request object to be used by the server.
-     * If the protocol has too few of the required fields (i.e missing data) then a @see musicss.protocol.Response.Void
+     * Given a packed message, it unpacks it into a ClientEvent object to be used by the server.
+     * If the message has too few of the required fields (i.e missing data) then a @see musicss.protocol.ServerEvent.Void
      *      will be returned by the function.
-     * @param msg The packed protocol to be unpacked.
-     * @return The unpacked protocol as a Request object.
+     * @param msg The packed message to be unpacked.
+     * @return The unpacked message as a ClientEvent object.
      */
-    public Request unpackRequest(String msg) {
-        Request clientRequest = new Request.Void();
+    public ClientEvent unpackClientEvent(String msg) {
+        ClientEvent clientClientEvent = new ClientEvent.Void();
 
         if (msg.startsWith("login:")) {
-            Request.Login loginRequest = new Request.Login();
+            ClientEvent.Login loginRequest = new ClientEvent.Login();
 
             String[] fields = msg.substring(6).split(",");
             if (fields.length >= 2) {
                 loginRequest.username = fields[0];
                 loginRequest.password = fields[1];
 
-                clientRequest = loginRequest;
+                clientClientEvent = loginRequest;
             }
         } else if (msg.startsWith("register:")) {
-            Request.Register registerRequest = new Request.Register();
+            ClientEvent.Register registerRequest = new ClientEvent.Register();
 
             String[] fields = msg.substring(9).split(",");
             if (fields.length >= 4) {
@@ -53,41 +53,41 @@ public class ProtocolImplementer {
                 registerRequest.password = fields[2];
                 registerRequest.email = fields[3];
 
-                clientRequest = registerRequest;
+                clientClientEvent = registerRequest;
             }
         }
 
-        return clientRequest;
+        return clientClientEvent;
     }
 
     /**
-     * Given a packed protocol, it unpacks it into a Response object to be parsed by the client.
-     * @param msg The packed protocol to be unpacked.
-     * @return The unpacked protocol as a Response object.
+     * Given a packed message, it unpacks it into a ServerEvent object to be parsed by the client.
+     * @param msg The packed message to be unpacked.
+     * @return The unpacked message as a ServerEvent object.
      */
-    public Response unpackResponse(String msg) {
-        Response response = new Response.Void();
+    public ServerEvent unpackServerEvent(String msg) {
+        ServerEvent serverEvent = new ServerEvent.Void();
 
         if (msg.equals(StatusCodes.OK)) {
-            response = new Response.Ok();
+            serverEvent = new ServerEvent.Ok();
         } else if (msg.equals(StatusCodes.INVALIDAUTH)) {
-            response = new Response.InvalidAuth();
+            serverEvent = new ServerEvent.InvalidAuth();
         } else if (msg.equals(StatusCodes.INVALIDREG)) {
-            response = new Response.InvalidReg();
+            serverEvent = new ServerEvent.InvalidReg();
         }
 
-        return response;
+        return serverEvent;
     }
 
     /**
-     * Packs a response into the protocol complaint format.
-     * @param response The response to be packed.
-     * @return The packed protocol that is ready to be sent.
+     * Packs a serverEvent into the protocol complaint format.
+     * @param serverEvent The serverEvent to be packed.
+     * @return The packed message that is ready to be sent.
      */
-    public String pack(Response response) {
+    public String pack(ServerEvent serverEvent) {
         String reply = StatusCodes.VOID;
 
-        switch (response.type) {
+        switch (serverEvent.type) {
             case OK:
                 reply = StatusCodes.OK;
                 break;
@@ -103,20 +103,20 @@ public class ProtocolImplementer {
     }
 
     /**
-     * Packs a request into the protocol complaint format.
-     * @param request The request to be packed.
-     * @return The packed protocol that is ready to be sent.
+     * Packs a clientEvent into the protocol complaint format.
+     * @param clientEvent The clientEvent to be packed.
+     * @return The packed message that is ready to be sent.
      */
-    public String pack(Request request) {
+    public String pack(ClientEvent clientEvent) {
         String reply = StatusCodes.VOID;
 
-        switch (request.type) {
+        switch (clientEvent.type) {
             case LOGIN:
-                Request.Login loginRequest = (Request.Login) request;
+                ClientEvent.Login loginRequest = (ClientEvent.Login) clientEvent;
                 reply = "login:" + loginRequest.username + "," + loginRequest.password;
                 break;
             case REGISTER:
-                Request.Register registerRequest = (Request.Register) request;
+                ClientEvent.Register registerRequest = (ClientEvent.Register) clientEvent;
                 reply = "register:" + registerRequest.name + "," + registerRequest.username + "," +
                         registerRequest.password + "," + registerRequest.email;
                 break;

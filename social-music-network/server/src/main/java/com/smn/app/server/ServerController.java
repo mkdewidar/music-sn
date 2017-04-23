@@ -1,7 +1,7 @@
 package com.smn.app.server;
 
-import com.smn.app.protocol.message.Request;
-import com.smn.app.protocol.message.Response;
+import com.smn.app.protocol.message.ClientEvent;
+import com.smn.app.protocol.message.ServerEvent;
 
 import java.util.HashMap;
 
@@ -21,38 +21,38 @@ public class ServerController {
     }
 
     /**
-     * Processes the request object provided.
-     * @param request The request object that we got from the client.
+     * Processes the clientEvent object provided.
+     * @param clientEvent The clientEvent object that we got from the client.
      * @return The response that should be sent to the client.
      */
-    public Response process(Request request) {
-        Response response = new Response.Void();
+    public ServerEvent process(ClientEvent clientEvent) {
+        ServerEvent serverEvent = new ServerEvent.Void();
 
-        switch (request.type) {
+        switch (clientEvent.type) {
             case LOGIN:
-                Request.Login loginRequest = (Request.Login)request;
+                ClientEvent.Login loginRequest = (ClientEvent.Login) clientEvent;
                 if (database.authenticateLogin(loginRequest.username, loginRequest.password)) {
-                    response = new Response.Ok();
+                    serverEvent = new ServerEvent.Ok();
 
                     Login(loginRequest.username, loginRequest.password);
                 } else {
-                    response = new Response.InvalidAuth();
+                    serverEvent = new ServerEvent.InvalidAuth();
                 }
                 break;
             case REGISTER:
-                Request.Register registerRequest = (Request.Register)request;
+                ClientEvent.Register registerRequest = (ClientEvent.Register) clientEvent;
                 if (database.registerUser(registerRequest.username, registerRequest.password,
                         registerRequest.name, registerRequest.email)) {
-                    response = new Response.Ok();
+                    serverEvent = new ServerEvent.Ok();
 
                     Login(registerRequest.username, registerRequest.password);
                 } else {
-                    response = new Response.InvalidReg();
+                    serverEvent = new ServerEvent.InvalidReg();
                 }
                 break;
         }
 
-        return response;
+        return serverEvent;
     }
 
     /**

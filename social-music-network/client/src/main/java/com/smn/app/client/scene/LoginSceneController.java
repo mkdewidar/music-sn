@@ -4,8 +4,8 @@ import com.smn.app.client.control.LoginControl;
 import com.smn.app.client.control.RegisterControl;
 import com.smn.app.client.event.AppEvent;
 
-import com.smn.app.protocol.message.Request;
-import com.smn.app.protocol.message.Response;
+import com.smn.app.protocol.message.ClientEvent;
+import com.smn.app.protocol.message.ServerEvent;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -41,7 +41,7 @@ public class LoginSceneController extends SceneController {
     }
 
     public void validateLogin(String username, String password) {
-        Request.Login loginRequest = new Request.Login();
+        ClientEvent.Login loginRequest = new ClientEvent.Login();
         loginRequest.username = username;
         loginRequest.password = password;
 
@@ -49,7 +49,7 @@ public class LoginSceneController extends SceneController {
     }
 
     public void registerUser(String name, String userId, String pass, String email) {
-        Request.Register registerRequest = new Request.Register();
+        ClientEvent.Register registerRequest = new ClientEvent.Register();
         registerRequest.username = userId;
         registerRequest.password = pass;
         registerRequest.email = email;
@@ -59,7 +59,7 @@ public class LoginSceneController extends SceneController {
     }
 
     @Override
-    public void handleServerEvent(Response event) {
+    public void handleServerEvent(ServerEvent event) {
         switch (event.type) {
             case OK:
                 Platform.runLater(() -> {

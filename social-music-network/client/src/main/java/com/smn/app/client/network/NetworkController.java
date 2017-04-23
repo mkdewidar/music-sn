@@ -3,8 +3,8 @@ package com.smn.app.client.network;
 import com.smn.app.client.scene.SceneController;
 
 import com.smn.app.protocol.ProtocolImplementer;
-import com.smn.app.protocol.message.Request;
-import com.smn.app.protocol.message.Response;
+import com.smn.app.protocol.message.ClientEvent;
+import com.smn.app.protocol.message.ServerEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,8 +51,8 @@ public class NetworkController {
                 try {
                     msg = inputStream.readLine();
 
-                    Response serverEvent =  protocol.unpackResponse(msg);
-                    if (serverEvent.type == Response.Types.VOID)
+                    ServerEvent serverEvent =  protocol.unpackServerEvent(msg);
+                    if (serverEvent.type == ServerEvent.Types.VOID)
                         System.err.println("ERROR: This server event has been identified as VOID.");
 
                     sceneController.handleServerEvent(serverEvent);
@@ -121,7 +121,7 @@ public class NetworkController {
      *
      * @return The response for the clientEvent made.
      */
-    public void sendRequest(Request clientEvent) {
+    public void sendRequest(ClientEvent clientEvent) {
         String msg = protocol.pack(clientEvent);
         if (msg.equals(ProtocolImplementer.StatusCodes.VOID))
             System.err.println("ERROR: This client event is VOID");

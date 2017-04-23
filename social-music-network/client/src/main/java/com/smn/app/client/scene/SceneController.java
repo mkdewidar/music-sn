@@ -3,7 +3,7 @@ package com.smn.app.client.scene;
 import com.smn.app.client.control.StatusControl;
 import com.smn.app.client.network.NetworkController;
 
-import com.smn.app.protocol.message.Response;
+import com.smn.app.protocol.message.ServerEvent;
 
 import javafx.fxml.Initializable;
 
@@ -27,7 +27,7 @@ public class SceneController implements Initializable {
         networkController.sceneController = this;
     }
 
-    public void handleServerEvent(Response event) {
+    public void handleServerEvent(ServerEvent event) {
     }
 
     public void setNetworkConnected(boolean connected) {
