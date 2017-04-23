@@ -9,6 +9,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
+import java.util.List;
+
 /**
  * The class that allows access to the databases functionality.
  */
@@ -30,7 +32,7 @@ public class DatabaseInterface {
      * @param password The user's password.
      * @return Returns true if the username and password are of a valid user.
      */
-    boolean authenticateLogin(String username, String password) {
+    public boolean authenticateLogin(String username, String password) {
         Document user = (Document) userInfoCollection.find(Filters.eq("_id", username)).first();
         if (user == null) {
             return false;
@@ -46,7 +48,7 @@ public class DatabaseInterface {
      * @param email The new user's email.
      * @return Returns true if the user registered successfully.
      */
-    boolean registerUser(String username, String password, String name, String email) {
+    public boolean registerUser(String username, String password, String name, String email) {
         Document newUser = new Document().append("_id", username)
                 .append("password", password).append("name", name).append("email", email)
                 .append("channels", null).append("friends", null).append("requests", null);
@@ -57,5 +59,15 @@ public class DatabaseInterface {
             return false;
         }
         return true;
+    }
+
+    public String[] getFriends(String username) {
+        Document userInfo = (Document) userInfoCollection.find(Filters.eq("_id", username)).first();
+        Object friendList = userInfo.get("friends");
+        if (friendList == null) {
+            // Mongo found nothing at that key so no friends
+            return null;
+        }
+        return (String[]) ((List<String>) friendList).toArray();
     }
 }

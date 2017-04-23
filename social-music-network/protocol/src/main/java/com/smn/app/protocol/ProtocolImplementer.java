@@ -84,6 +84,7 @@ public class ProtocolImplementer {
         } else if (msg.startsWith("friends:")) {
             ServerEvent.UserFriends friendListEvent = new ServerEvent.UserFriends();
             friendListEvent.friends = msg.substring(8).split(",");
+            serverEvent = friendListEvent;
         }
 
         return serverEvent;
@@ -110,9 +111,12 @@ public class ProtocolImplementer {
             case USERFRIENDS:
                 ServerEvent.UserFriends friendsListEvent = (ServerEvent.UserFriends) serverEvent;
                 msg = "friends:";
-                for (String friend : friendsListEvent.friends) {
-                    msg += friend;
+                if (friendsListEvent.friends != null) {
+                    for (String friend : friendsListEvent.friends) {
+                        msg += friend;
+                    }
                 }
+                break;
         }
 
         return msg;
@@ -139,9 +143,11 @@ public class ProtocolImplementer {
             case FRIENDSLIST:
                 ClientEvent.FriendsList friendsList = (ClientEvent.FriendsList) clientEvent;
                 msg = "friends";
+                break;
             case FRIENDREQUEST:
                 ClientEvent.FriendRequest friendRequest = (ClientEvent.FriendRequest) clientEvent;
                 msg = "frequest:" + friendRequest.username;
+                break;
         }
 
         return msg;

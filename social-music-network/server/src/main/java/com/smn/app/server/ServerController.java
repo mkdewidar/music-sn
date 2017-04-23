@@ -50,6 +50,14 @@ public class ServerController {
                     serverEvent = new ServerEvent.InvalidReg();
                 }
                 break;
+            case FRIENDSLIST:
+                ClientEvent.FriendsList friendsList = (ClientEvent.FriendsList) clientEvent;
+
+                ServerEvent.UserFriends userFriends = new ServerEvent.UserFriends();
+                userFriends.friends = database.getFriends(userServerCookie.id);
+
+                serverEvent = userFriends;
+                break;
         }
 
         return serverEvent;

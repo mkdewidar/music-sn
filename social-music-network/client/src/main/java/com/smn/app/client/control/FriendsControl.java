@@ -42,16 +42,23 @@ public class FriendsControl extends VBox {
         }
 
         friends = new ArrayList<String>();
-        friends.add("Search above for friends");
+        friends.add("Loading friends...");
 
         listItems = FXCollections.observableArrayList();
-        listItems.setAll("Hello", "World", "Again", "and", "Again");
+        listItems.setAll(friends);
 
         friendListView.setItems(listItems);
+
+        // sets the list to the user's friends when not searching
+        friendSearchField.setOnKeyReleased((event) -> {
+            if (getSearchText().equals("")) {
+                listItems.setAll(friends);
+            }
+        });
     }
 
     /**
-     * Sets an event handler to be called when the user attempts to search for a friend.
+     * Sets an event handler to be called when the user attempts to search for someone.
      * @param eventHandler The handler to be called.
      */
     public void setOnFriendSearch(EventHandler eventHandler) {
@@ -59,19 +66,25 @@ public class FriendsControl extends VBox {
     }
 
     /**
-     * Sets the items in the friends list.
+     * Sets the items in the friends list. Also sets current viewable list to friends list.
      * @param items The items to replace the ones in the current list.
      */
     public void setFriendsList(List items) {
         friends.clear();
         friends.addAll(items);
+        listItems.setAll(friends);
     }
 
     /**
-     * Adds the items to the current items in the friends list.
+     * Adds the items to the current items in the friends list. Also sets current viewable list to friends list.
      * @param items The items to be added to the list.
      */
     public void addFirendsListItems(List items) {
         friends.addAll(items);
+        listItems.setAll(friends);
+    }
+
+    public String getSearchText() {
+        return friendSearchField.getText();
     }
 }
