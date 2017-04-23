@@ -1,7 +1,5 @@
 package com.smn.app.protocol.message;
 
-import java.util.ArrayList;
-
 /**
  * A response that the server can give the client.
  */

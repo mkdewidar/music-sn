@@ -59,6 +59,9 @@ public class ProtocolImplementer {
             ClientEvent.FriendsList friendsRequest = new ClientEvent.FriendsList();
 
             clientEvent = friendsRequest;
+        } else if (msg.startsWith("frequest:")) {
+            ClientEvent.FriendRequest friendRequest = new ClientEvent.FriendRequest();
+            friendRequest.username = msg.substring(9).split(",")[0];
         }
 
         return clientEvent;
@@ -125,17 +128,20 @@ public class ProtocolImplementer {
 
         switch (clientEvent.type) {
             case LOGIN:
-                ClientEvent.Login loginEvent = (ClientEvent.Login) clientEvent;
-                msg = "login:" + loginEvent.username + "," + loginEvent.password;
+                ClientEvent.Login login = (ClientEvent.Login) clientEvent;
+                msg = "login:" + login.username + "," + login.password;
                 break;
             case REGISTER:
-                ClientEvent.Register registerEvent = (ClientEvent.Register) clientEvent;
-                msg = "register:" + registerEvent.name + "," + registerEvent.username + "," +
-                        registerEvent.password + "," + registerEvent.email;
+                ClientEvent.Register register = (ClientEvent.Register) clientEvent;
+                msg = "register:" + register.name + "," + register.username + "," +
+                        register.password + "," + register.email;
                 break;
             case FRIENDSLIST:
-                ClientEvent.FriendsList friendsListEvent = (ClientEvent.FriendsList) clientEvent;
+                ClientEvent.FriendsList friendsList = (ClientEvent.FriendsList) clientEvent;
                 msg = "friends";
+            case FRIENDREQUEST:
+                ClientEvent.FriendRequest friendRequest = (ClientEvent.FriendRequest) clientEvent;
+                msg = "frequest:" + friendRequest.username;
         }
 
         return msg;

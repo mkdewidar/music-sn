@@ -8,6 +8,7 @@ public abstract class ClientEvent {
         LOGIN,
         REGISTER,
         FRIENDSLIST,
+        FRIENDREQUEST,
         VOID
     }
 
@@ -45,6 +46,18 @@ public abstract class ClientEvent {
     public static class FriendsList extends ClientEvent {
         public FriendsList() {
             type = Types.FRIENDSLIST;
+        }
+    }
+
+    /**
+     * Signals a client requesting to be friends with another user.
+     */
+    public static class FriendRequest extends ClientEvent {
+        // name of the user to send the request to
+        public String username;
+
+        public FriendRequest() {
+            type = Types.FRIENDREQUEST;
         }
     }
 
