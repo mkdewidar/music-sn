@@ -10,7 +10,6 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -39,7 +38,7 @@ public class AppSceneController extends SceneController {
             case USERFRIENDS:
                 ServerEvent.UserFriends userFriends = (ServerEvent.UserFriends) event;
                 ArrayList<String> friendList = new ArrayList<>();
-                if (userFriends.friends[0].equals("")) {
+                if (userFriends.friends == null) {
                     friendList.add("No Friends Yet!");
                 } else {
                     friendList.addAll(Arrays.asList(userFriends.friends));
@@ -49,10 +48,10 @@ public class AppSceneController extends SceneController {
                     friendsControl.setFriendsList(friendList);
                 });
                 break;
-            case FRIENDSEARCH:
-                ServerEvent.FriendSearch friendSearch = (ServerEvent.FriendSearch) event;
+            case USERSEARCH:
+                ServerEvent.UserSearch userSearch = (ServerEvent.UserSearch) event;
                 ArrayList<String> results = new ArrayList();
-                results.addAll(Arrays.asList(friendSearch.results));
+                results.addAll(Arrays.asList(userSearch.results));
 
                 Platform.runLater(() -> {
                     friendsControl.setSearchResults(results);

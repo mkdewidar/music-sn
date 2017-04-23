@@ -59,7 +59,7 @@ public class ServerController {
             case USERSEARCH:
                 ClientEvent.UserSearch userSearch = (ClientEvent.UserSearch) clientEvent;
 
-                ServerEvent.FriendSearch friendSearch = new ServerEvent.FriendSearch();
+                ServerEvent.UserSearch friendSearch = new ServerEvent.UserSearch();
                 friendSearch.results = database.searchUsers(userServerCookie.id, userSearch.searchString);
 
                 serverEvent = friendSearch;

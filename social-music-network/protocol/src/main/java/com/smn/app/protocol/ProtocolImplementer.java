@@ -1,7 +1,11 @@
 package com.smn.app.protocol;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.util.JSON;
 import com.smn.app.protocol.message.ClientEvent;
 import com.smn.app.protocol.message.ServerEvent;
+import org.bson.BSONObject;
+import org.bson.BasicBSONObject;
 
 /**
  * Class that implements the application layer protocol.
@@ -14,13 +18,13 @@ public class ProtocolImplementer {
      */
     public static class StatusCodes {
         // ClientEvent was good and has been processed
-        public static String OK = "OK";
+        public static final String OK = "OK";
         // The auth provided was incorrect
-        public static String INVALIDAUTH = "invalidAuth";
+        public static final String INVALIDAUTH = "invalidAuth";
         // The registration information is incorrect
-        public static String INVALIDREG = "invalidReg";
+        public static final String INVALIDREG = "invalidReg";
         // A void reply for a void/incorrect protocol
-        public static String VOID = "void";
+        public static final String VOID = "void";
     }
 
     /**
@@ -31,43 +35,55 @@ public class ProtocolImplementer {
      * @return The unpacked message as a ClientEvent object.
      */
     public ClientEvent unpackClientEvent(String msg) {
+        // If it's none of these messages, it's a void message
         ClientEvent clientEvent = new ClientEvent.Void();
+        // The message converted from JSON to BSON
+        BSONObject bMsg = (BSONObject) JSON.parse(msg);
 
-        if (msg.startsWith("login:")) {
-            ClientEvent.Login loginRequest = new ClientEvent.Login();
+        String msgType = (String) bMsg.get("type");
 
-            String[] fields = msg.substring(6).split(",");
-            if (fields.length >= 2) {
-                loginRequest.username = fields[0];
-                loginRequest.password = fields[1];
+        switch (msgType) {
+            case "login":
+                ClientEvent.Login loginRequest = new ClientEvent.Login();
+
+                loginRequest.username = (String) bMsg.get("username");
+                loginRequest.password = (String) bMsg.get("password");
 
                 clientEvent = loginRequest;
-            }
-        } else if (msg.startsWith("register:")) {
-            ClientEvent.Register registerRequest = new ClientEvent.Register();
+                break;
 
-            String[] fields = msg.substring(9).split(",");
-            if (fields.length >= 4) {
-                registerRequest.name = fields[0];
-                registerRequest.username = fields[1];
-                registerRequest.password = fields[2];
-                registerRequest.email = fields[3];
+            case "register":
+                ClientEvent.Register registerRequest = new ClientEvent.Register();
+
+                registerRequest.name = (String) bMsg.get("name");
+                registerRequest.username = (String) bMsg.get("username");
+                registerRequest.password = (String) bMsg.get("password");
+                registerRequest.email = (String) bMsg.get("email");
 
                 clientEvent = registerRequest;
-            }
-        } else if (msg.equals("friends")) {
-            ClientEvent.FriendsList friendsRequest = new ClientEvent.FriendsList();
-            clientEvent = friendsRequest;
-        } else if (msg.startsWith("frequest:")) {
-            ClientEvent.FriendRequest friendRequest = new ClientEvent.FriendRequest();
-            friendRequest.username = msg.substring(9).split(",")[0];
+                break;
 
-            clientEvent = friendRequest;
-        } else if (msg.startsWith("fsearch:")) {
-            ClientEvent.UserSearch userSearch = new ClientEvent.UserSearch();
-            userSearch.searchString = msg.substring(8);
+            case "get-friends":
+                ClientEvent.FriendsList friendsRequest = new ClientEvent.FriendsList();
 
-            clientEvent = userSearch;
+                clientEvent = friendsRequest;
+                break;
+
+            case "friend-request":
+                ClientEvent.FriendRequest friendRequest = new ClientEvent.FriendRequest();
+
+                friendRequest.username = (String) bMsg.get("receiver");
+
+                clientEvent = friendRequest;
+                break;
+
+            case "user-search":
+                ClientEvent.UserSearch userSearch = new ClientEvent.UserSearch();
+
+                userSearch.searchString = (String) bMsg.get("search-string");
+
+                clientEvent = userSearch;
+                break;
         }
 
         return clientEvent;
@@ -80,23 +96,50 @@ public class ProtocolImplementer {
      */
     public ServerEvent unpackServerEvent(String msg) {
         ServerEvent serverEvent = new ServerEvent.Void();
+        BSONObject bMsg = (BSONObject) JSON.parse(msg);
 
-        if (msg.equals(StatusCodes.OK)) {
-            serverEvent = new ServerEvent.Ok();
-        } else if (msg.equals(StatusCodes.INVALIDAUTH)) {
-            serverEvent = new ServerEvent.InvalidAuth();
-        } else if (msg.equals(StatusCodes.INVALIDREG)) {
-            serverEvent = new ServerEvent.InvalidReg();
-        } else if (msg.startsWith("friends:")) {
-            ServerEvent.UserFriends friendListEvent = new ServerEvent.UserFriends();
-            friendListEvent.friends = msg.substring(8).split(",");
+        String msgType = (String) bMsg.get("type");
 
-            serverEvent = friendListEvent;
-        } else if (msg.startsWith("fsearch:")) {
-            ServerEvent.FriendSearch friendSearch = new ServerEvent.FriendSearch();
-            friendSearch.results = msg.substring(8).split(",");
+        switch (msgType) {
+            case StatusCodes.OK:
+                serverEvent = new ServerEvent.Ok();
+                break;
 
-            serverEvent = friendSearch;
+            case StatusCodes.INVALIDAUTH:
+                serverEvent = new ServerEvent.InvalidAuth();
+                break;
+
+            case StatusCodes.INVALIDREG:
+                serverEvent = new ServerEvent.InvalidReg();
+                break;
+
+            case "get-friends":
+                ServerEvent.UserFriends friendListEvent = new ServerEvent.UserFriends();
+
+                BasicDBList friends = (BasicDBList) bMsg.get("friends");
+                if (friends == null) {
+                    friendListEvent.friends = null;
+                } else {
+                    friendListEvent.friends = new String[friends.size()];
+                    friends.toArray(friendListEvent.friends);
+                }
+
+                serverEvent = friendListEvent;
+                break;
+
+            case "user-search":
+                ServerEvent.UserSearch userSearch = new ServerEvent.UserSearch();
+
+                BasicDBList results = (BasicDBList) bMsg.get("results");
+                if (results == null) {
+                    userSearch.results = null;
+                } else {
+                    userSearch.results = new String[results.size()];
+                    results.toArray(userSearch.results);
+                }
+
+                serverEvent = userSearch;
+                break;
         }
 
         return serverEvent;
@@ -108,39 +151,44 @@ public class ProtocolImplementer {
      * @return The packed message that is ready to be sent.
      */
     public String pack(ServerEvent serverEvent) {
-        String msg = StatusCodes.VOID;
+        BSONObject bMsg = new BasicBSONObject();
+        bMsg.put("type", StatusCodes.VOID);
 
         switch (serverEvent.type) {
             case OK:
-                msg = StatusCodes.OK;
+                bMsg.put("type", StatusCodes.OK);
                 break;
+
             case INVALIDAUTH:
-                msg = StatusCodes.INVALIDAUTH;
+                bMsg.put("type", StatusCodes.INVALIDAUTH);
                 break;
+
             case INVALIDREG:
-                msg = StatusCodes.INVALIDREG;
+                bMsg.put("type", StatusCodes.INVALIDREG);
                 break;
+
             case USERFRIENDS:
                 ServerEvent.UserFriends friendsListEvent = (ServerEvent.UserFriends) serverEvent;
-                msg = "friends:";
+
+                bMsg.put("type", "get-friends");
                 if (friendsListEvent.friends != null) {
-                    for (String friend : friendsListEvent.friends) {
-                        msg += friend + ",";
-                    }
+                    bMsg.put("friends", friendsListEvent.friends);
                 }
+
                 break;
-            case FRIENDSEARCH:
-                ServerEvent.FriendSearch friendSearch = (ServerEvent.FriendSearch) serverEvent;
-                msg = "fsearch:";
-                if (friendSearch.results != null) {
-                    for (String user : friendSearch.results) {
-                        msg += user + ",";
-                    }
+
+            case USERSEARCH:
+                ServerEvent.UserSearch userSearch = (ServerEvent.UserSearch) serverEvent;
+
+                bMsg.put("type", "user-search");
+                if (userSearch.results != null) {
+                    bMsg.put("results", userSearch.results);
                 }
+
                 break;
         }
 
-        return msg;
+        return JSON.serialize(bMsg);
     }
 
     /**
@@ -149,32 +197,51 @@ public class ProtocolImplementer {
      * @return The packed message that is ready to be sent.
      */
     public String pack(ClientEvent clientEvent) {
-        String msg = StatusCodes.VOID;
+        BSONObject bMsg = new BasicBSONObject();
+        bMsg.put("type", StatusCodes.VOID);
 
         switch (clientEvent.type) {
             case LOGIN:
                 ClientEvent.Login login = (ClientEvent.Login) clientEvent;
-                msg = "login:" + login.username + "," + login.password;
+
+                bMsg.put("type", "login");
+
+                bMsg.put("username", login.username);
+                bMsg.put("password", login.password);
+
                 break;
             case REGISTER:
                 ClientEvent.Register register = (ClientEvent.Register) clientEvent;
-                msg = "register:" + register.name + "," + register.username + "," +
-                        register.password + "," + register.email;
+
+                bMsg.put("type", "register");
+
+                bMsg.put("username", register.username);
+                bMsg.put("password", register.password);
+                bMsg.put("name", register.name);
+                bMsg.put("email", register.email);
+
                 break;
             case FRIENDSLIST:
-                ClientEvent.FriendsList friendsList = (ClientEvent.FriendsList) clientEvent;
-                msg = "friends";
+                bMsg.put("type", "get-friends");
                 break;
             case FRIENDREQUEST:
                 ClientEvent.FriendRequest friendRequest = (ClientEvent.FriendRequest) clientEvent;
-                msg = "frequest:" + friendRequest.username;
+
+                bMsg.put("type", "friend-request");
+
+                bMsg.put("receiver", friendRequest.username);
+
                 break;
             case USERSEARCH:
                 ClientEvent.UserSearch userSearch = (ClientEvent.UserSearch) clientEvent;
-                msg = "fsearch:" + userSearch.searchString;
+
+                bMsg.put("type", "user-search");
+
+                bMsg.put("search-string", userSearch.searchString);
+
                 break;
         }
 
-        return msg;
+        return JSON.serialize(bMsg);
     }
 }

@@ -9,7 +9,7 @@ public class ServerEvent {
         INVALIDAUTH,
         INVALIDREG,
         USERFRIENDS,
-        FRIENDSEARCH,
+        USERSEARCH,
         VOID
     }
 
@@ -74,11 +74,11 @@ public class ServerEvent {
     /**
      * The results of a search for another user.
      */
-    public static class FriendSearch extends ServerEvent {
+    public static class UserSearch extends ServerEvent {
         public String[] results;
 
-        public FriendSearch() {
-            type = Types.FRIENDSEARCH;
+        public UserSearch() {
+            type = Types.USERSEARCH;
         }
     }
 }
