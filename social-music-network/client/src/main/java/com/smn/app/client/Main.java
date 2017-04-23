@@ -63,7 +63,7 @@ public class Main extends Application {
             return;
         }
 
-        mainScene = new Scene(rootNode, 500, 500);
+        mainScene = new Scene(rootNode, 600, 500);
         stage.setScene(mainScene);
     }
 
@@ -81,7 +81,7 @@ public class Main extends Application {
             return;
         }
 
-        mainScene = new Scene(rootNode, 500, 500);
+        mainScene = new Scene(rootNode, 600, 500);
         stage.setScene(mainScene);
     }
 
