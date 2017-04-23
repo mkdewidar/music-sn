@@ -7,6 +7,7 @@ public abstract class ClientEvent {
     public enum Types {
         LOGIN,
         REGISTER,
+        FRIENDSLIST,
         VOID
     }
 
@@ -35,6 +36,15 @@ public abstract class ClientEvent {
 
         public Register() {
             type = Types.REGISTER;
+        }
+    }
+
+    /**
+     * Sent by the client when a list of the current users friends are needed.
+     */
+    public static class FriendsList extends ClientEvent {
+        public FriendsList() {
+            type = Types.FRIENDSLIST;
         }
     }
 

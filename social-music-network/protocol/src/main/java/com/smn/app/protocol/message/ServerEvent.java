@@ -1,5 +1,7 @@
 package com.smn.app.protocol.message;
 
+import java.util.ArrayList;
+
 /**
  * A response that the server can give the client.
  */
@@ -8,6 +10,7 @@ public class ServerEvent {
         OK,
         INVALIDAUTH,
         INVALIDREG,
+        USERFRIENDS,
         VOID
     }
 
@@ -55,6 +58,17 @@ public class ServerEvent {
 
         public InvalidReg() {
             type = Types.INVALIDREG;
+        }
+    }
+
+    /**
+     * An event carrying the list of the current user's friends.
+     */
+    public static class UserFriends extends ServerEvent {
+        public String[] friends;
+
+        public UserFriends() {
+            type = Types.USERFRIENDS;
         }
     }
 }

@@ -31,7 +31,7 @@ public class ProtocolImplementer {
      * @return The unpacked message as a ClientEvent object.
      */
     public ClientEvent unpackClientEvent(String msg) {
-        ClientEvent clientClientEvent = new ClientEvent.Void();
+        ClientEvent clientEvent = new ClientEvent.Void();
 
         if (msg.startsWith("login:")) {
             ClientEvent.Login loginRequest = new ClientEvent.Login();
@@ -41,7 +41,7 @@ public class ProtocolImplementer {
                 loginRequest.username = fields[0];
                 loginRequest.password = fields[1];
 
-                clientClientEvent = loginRequest;
+                clientEvent = loginRequest;
             }
         } else if (msg.startsWith("register:")) {
             ClientEvent.Register registerRequest = new ClientEvent.Register();
@@ -53,11 +53,15 @@ public class ProtocolImplementer {
                 registerRequest.password = fields[2];
                 registerRequest.email = fields[3];
 
-                clientClientEvent = registerRequest;
+                clientEvent = registerRequest;
             }
+        } else if (msg.equals("friends")) {
+            ClientEvent.FriendsList friendsRequest = new ClientEvent.FriendsList();
+
+            clientEvent = friendsRequest;
         }
 
-        return clientClientEvent;
+        return clientEvent;
     }
 
     /**
@@ -74,6 +78,9 @@ public class ProtocolImplementer {
             serverEvent = new ServerEvent.InvalidAuth();
         } else if (msg.equals(StatusCodes.INVALIDREG)) {
             serverEvent = new ServerEvent.InvalidReg();
+        } else if (msg.startsWith("friends:")) {
+            ServerEvent.UserFriends friendListEvent = new ServerEvent.UserFriends();
+            friendListEvent.friends = msg.substring(8).split(",");
         }
 
         return serverEvent;
@@ -85,21 +92,27 @@ public class ProtocolImplementer {
      * @return The packed message that is ready to be sent.
      */
     public String pack(ServerEvent serverEvent) {
-        String reply = StatusCodes.VOID;
+        String msg = StatusCodes.VOID;
 
         switch (serverEvent.type) {
             case OK:
-                reply = StatusCodes.OK;
+                msg = StatusCodes.OK;
                 break;
             case INVALIDAUTH:
-                reply = StatusCodes.INVALIDAUTH;
+                msg = StatusCodes.INVALIDAUTH;
                 break;
             case INVALIDREG:
-                reply = StatusCodes.INVALIDREG;
+                msg = StatusCodes.INVALIDREG;
                 break;
+            case USERFRIENDS:
+                ServerEvent.UserFriends friendsListEvent = (ServerEvent.UserFriends) serverEvent;
+                msg = "friends:";
+                for (String friend : friendsListEvent.friends) {
+                    msg += friend;
+                }
         }
 
-        return reply;
+        return msg;
     }
 
     /**
@@ -108,20 +121,23 @@ public class ProtocolImplementer {
      * @return The packed message that is ready to be sent.
      */
     public String pack(ClientEvent clientEvent) {
-        String reply = StatusCodes.VOID;
+        String msg = StatusCodes.VOID;
 
         switch (clientEvent.type) {
             case LOGIN:
-                ClientEvent.Login loginRequest = (ClientEvent.Login) clientEvent;
-                reply = "login:" + loginRequest.username + "," + loginRequest.password;
+                ClientEvent.Login loginEvent = (ClientEvent.Login) clientEvent;
+                msg = "login:" + loginEvent.username + "," + loginEvent.password;
                 break;
             case REGISTER:
-                ClientEvent.Register registerRequest = (ClientEvent.Register) clientEvent;
-                reply = "register:" + registerRequest.name + "," + registerRequest.username + "," +
-                        registerRequest.password + "," + registerRequest.email;
+                ClientEvent.Register registerEvent = (ClientEvent.Register) clientEvent;
+                msg = "register:" + registerEvent.name + "," + registerEvent.username + "," +
+                        registerEvent.password + "," + registerEvent.email;
                 break;
+            case FRIENDSLIST:
+                ClientEvent.FriendsList friendsListEvent = (ClientEvent.FriendsList) clientEvent;
+                msg = "friends";
         }
 
-        return reply;
+        return msg;
     }
 }
