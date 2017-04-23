@@ -16,7 +16,8 @@
         <Label text="Email" />
         <TextField fx:id="emailField" maxWidth="200.0" />
 
-        <Label fx:id="regError" text="Username is already in use, please use another." visible="false" managed="false" />
+        <Label fx:id="regUsernameError" text="Username is already in use, please use another."
+               visible="false" managed="false" textFill="red"/>
         <Label text="Username" />
         <TextField fx:id="usernameField" maxWidth="200.0" />
 
