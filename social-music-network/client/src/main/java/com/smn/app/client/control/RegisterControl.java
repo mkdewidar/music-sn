@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -15,6 +16,8 @@ import java.io.IOException;
  * Custom control for a register form.
  */
 public class RegisterControl extends VBox {
+    @FXML
+    protected Label regUsernameError;
     @FXML
     protected TextField nameField;
     @FXML
@@ -39,6 +42,11 @@ public class RegisterControl extends VBox {
             Platform.exit();
             return;
         }
+    }
+
+    public void setInvalidReg() {
+        regUsernameError.setVisible(true);
+        regUsernameError.setManaged(true);
     }
 
     public void addOnRegister(EventHandler eventHandler) {

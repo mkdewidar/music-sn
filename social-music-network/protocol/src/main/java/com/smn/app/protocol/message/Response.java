@@ -7,6 +7,7 @@ public class Response {
     public enum Types {
         OK,
         INVALIDAUTH,
+        INVALIDREG,
         VOID
     }
 
@@ -43,6 +44,17 @@ public class Response {
 
         public InvalidAuth() {
             type = Types.INVALIDAUTH;
+        }
+    }
+
+    /**
+     * Represents a failed user registration, one of the fields is not valid.
+     */
+    public static class InvalidReg extends Response {
+        public String desc = "";
+
+        public InvalidReg() {
+            type = Types.INVALIDREG;
         }
     }
 }

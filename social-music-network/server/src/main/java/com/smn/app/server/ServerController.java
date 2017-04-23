@@ -35,8 +35,7 @@ public class ServerController {
                     response = new Response.Ok();
 
                     Login(loginRequest.username, loginRequest.password);
-                }
-                else {
+                } else {
                     response = new Response.InvalidAuth();
                 }
                 break;
@@ -47,6 +46,8 @@ public class ServerController {
                     response = new Response.Ok();
 
                     Login(registerRequest.username, registerRequest.password);
+                } else {
+                    response = new Response.InvalidReg();
                 }
                 break;
         }
@@ -55,7 +56,7 @@ public class ServerController {
     }
 
     /**
-     * Log a user into the system.
+     * Log a user into the system, also called once user registration is complete.
      * @param username The id of the user.
      * @param password The authentication token of the user.
      */

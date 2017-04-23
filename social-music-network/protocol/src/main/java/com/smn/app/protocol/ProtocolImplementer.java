@@ -17,6 +17,8 @@ public class ProtocolImplementer {
         public static String OK = "OK";
         // The auth provided was incorrect
         public static String INVALIDAUTH = "invalidAuth";
+        // The registration information is incorrect
+        public static String INVALIDREG = "invalidReg";
         // A void reply for a void/incorrect protocol
         public static String VOID = "void";
     }
@@ -64,15 +66,17 @@ public class ProtocolImplementer {
      * @return The unpacked protocol as a Response object.
      */
     public Response unpackResponse(String msg) {
-        Response clientRequest = new Response.Void();
+        Response response = new Response.Void();
 
         if (msg.equals(StatusCodes.OK)) {
-            clientRequest = new Response.Ok();
+            response = new Response.Ok();
         } else if (msg.equals(StatusCodes.INVALIDAUTH)) {
-            clientRequest = new Response.InvalidAuth();
+            response = new Response.InvalidAuth();
+        } else if (msg.equals(StatusCodes.INVALIDREG)) {
+            response = new Response.InvalidReg();
         }
 
-        return clientRequest;
+        return response;
     }
 
     /**
@@ -89,6 +93,9 @@ public class ProtocolImplementer {
                 break;
             case INVALIDAUTH:
                 reply = StatusCodes.INVALIDAUTH;
+                break;
+            case INVALIDREG:
+                reply = StatusCodes.INVALIDREG;
                 break;
         }
 

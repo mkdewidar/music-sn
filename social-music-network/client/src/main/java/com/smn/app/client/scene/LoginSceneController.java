@@ -70,6 +70,9 @@ public class LoginSceneController extends SceneController {
             case INVALIDAUTH:
                 loginForm.setInvalidLogin();
                 break;
+            case INVALIDREG:
+                registerForm.setInvalidReg();
+                break;
         }
     }
 }

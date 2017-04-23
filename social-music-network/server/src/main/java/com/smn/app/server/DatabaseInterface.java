@@ -24,6 +24,12 @@ public class DatabaseInterface {
         }
     }
 
+    /**
+     * Given the user login information, returns whether or not it's a valid login.
+     * @param username The user's username.
+     * @param password The user's password.
+     * @return Returns true if the username and password are of a valid user.
+     */
     boolean authenticateLogin(String username, String password) {
         Document user = (Document) userInfoCollection.find(Filters.eq("_id", username)).first();
         if (user == null) {
@@ -32,6 +38,14 @@ public class DatabaseInterface {
         return true;
     }
 
+    /**
+     * Given new user information, determines whether or not the registration was successful.
+     * @param username The new user's username.
+     * @param password The new user's password.
+     * @param name The new user's name.
+     * @param email The new user's email.
+     * @return Returns true if the user registered successfully.
+     */
     boolean registerUser(String username, String password, String name, String email) {
         Document newUser = new Document().append("_id", username)
                 .append("password", password).append("name", name).append("email", email)
