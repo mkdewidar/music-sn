@@ -1,6 +1,7 @@
 package com.smn.app.client.scene;
 
 import com.smn.app.client.control.FriendsControl;
+import com.smn.app.client.event.AppEvent;
 import com.smn.app.protocol.message.ClientEvent;
 import com.smn.app.protocol.message.ServerEvent;
 
@@ -121,7 +122,7 @@ public class AppSceneController extends SceneController {
      * Sends a request to search by the search criteria provided.
      * @param searchString The search criteria to search by in regex.
      */
-    private void searchForUser(String searchString) {
+    protected void searchForUser(String searchString) {
         ClientEvent.UserSearch userSearch = new ClientEvent.UserSearch();
         userSearch.searchString = searchString;
 
@@ -132,7 +133,7 @@ public class AppSceneController extends SceneController {
      * Send a friend request to another user.
      * @param receiver The person receiving the friend request.
      */
-    private void sendFriendRequest(String receiver) {
+    protected void sendFriendRequest(String receiver) {
         ClientEvent.FriendRequest friendRequest = new ClientEvent.FriendRequest();
         friendRequest.username = receiver;
 
@@ -144,12 +145,28 @@ public class AppSceneController extends SceneController {
      * @param receiver The one receiving the reply, aka the sender of the friend request.
      * @param accept Whether it's an accept or a reject.
      */
-    private void friendRequestReply(String receiver, boolean accept) {
+    protected void friendRequestReply(String receiver, boolean accept) {
         ClientEvent.FriendRequestReply reply = new ClientEvent.FriendRequestReply();
 
         reply.sender = receiver;
         reply.accept = accept;
 
         this.networkController.sendRequest(reply);
+    }
+
+    /**
+     * Function used by the menu bar to close.
+     */
+    @FXML
+    protected void closeApplication() {
+        Platform.exit();
+    }
+
+    /**
+     * Function used in the menu bar to logout
+     */
+    @FXML
+    protected void logout() {
+        rootNode.fireEvent(new AppEvent.Logout());
     }
 }

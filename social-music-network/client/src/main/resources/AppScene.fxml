@@ -2,12 +2,25 @@
 
 <?import javafx.scene.layout.VBox?>
 <?import com.smn.app.client.control.StatusControl?>
-
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import com.smn.app.client.control.FriendsControl?>
-<VBox xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.control.MenuBar?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<VBox xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/8.0.121"
       fx:controller="com.smn.app.client.scene.AppSceneController" fx:id="rootNode" prefWidth="750" prefHeight="550">
+    <MenuBar>
+        <menus>
+            <Menu text="File">
+                <items>
+                    <MenuItem text="Logout" onAction="#logout"/>
+                    <MenuItem text="Quit" onAction="#closeApplication"/>
+                </items>
+            </Menu>
+        </menus>
+    </MenuBar>
     <StatusControl fx:id="statusBanner" />
     <SplitPane dividerPositions="0.25, 0.75" VBox.vgrow="ALWAYS">
         <items>
