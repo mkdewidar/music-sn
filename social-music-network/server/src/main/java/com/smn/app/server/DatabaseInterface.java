@@ -1,5 +1,6 @@
 package com.smn.app.server;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
@@ -8,6 +9,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -53,7 +55,9 @@ public class DatabaseInterface {
     public boolean registerUser(String username, String password, String name, String email) {
         Document newUser = new Document().append("_id", username)
                 .append("password", password).append("name", name).append("email", email)
-                .append("channels", null).append("friends", null).append("requests", null);
+                .append("channels", new ArrayList<String>())
+                .append("friends", new ArrayList<String>())
+                .append("requests", new ArrayList<String>());
 
         try {
             userInfoCollection.insertOne(newUser);
@@ -72,14 +76,14 @@ public class DatabaseInterface {
      */
     public String[] getFriends(String username) {
         Document userInfo = (Document) userInfoCollection.find(Filters.eq("_id", username)).first();
-        Object friendList = userInfo.get("friends");
+        ArrayList<String> friendList = (ArrayList<String>) userInfo.get("friends");
 
         if (friendList == null) {
             // Mongo found nothing at that key so no friends
             return null;
         }
 
-        return (String[]) ((List<String>) friendList).toArray();
+        return friendList.toArray(new String[friendList.size()]);
     }
 
     /**
@@ -100,5 +104,37 @@ public class DatabaseInterface {
         }
 
         return results.toArray(new String[results.size()]);
+    }
+
+    /**
+     * Adds a friend request to receiver's document from sender.
+     * @param sender The sender of the friend request.
+     * @param receiver The receiver of the friend request.
+     */
+    public void sendFriendRequest(String sender, String receiver) {
+        userInfoCollection.updateOne(Filters.eq("_id", receiver), Updates.addToSet("requests", sender));
+    }
+
+    /**
+     * Accept a friend request in user made by sender.
+     * @param user The current user.
+     * @param sender The one who sent the friend request.
+     * @return Returns the new list of friends.
+     */
+    public String[] acceptFriendRequest(String user, String sender) {
+        userInfoCollection.updateOne(Filters.eq("_id", user), Updates.addToSet("friends", sender));
+        userInfoCollection.updateOne(Filters.eq("_id", user), Updates.pull("requests", sender));
+        userInfoCollection.updateOne(Filters.eq("_id", sender), Updates.addToSet("friends", user));
+
+        return getFriends(user);
+    }
+
+    /**
+     * Remove a friend request by sender to user.
+     * @param user The current user.
+     * @param sender The person sending the request to be rejected.
+     */
+    public void rejectFriendRequest(String user, String sender) {
+        userInfoCollection.updateOne(Filters.eq("_id", user), Updates.pull("requests", sender));
     }
 }

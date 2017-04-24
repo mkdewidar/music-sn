@@ -3,6 +3,7 @@ package com.smn.app.client.scene;
 import com.smn.app.client.control.StatusControl;
 import com.smn.app.client.network.NetworkController;
 
+import com.smn.app.protocol.message.ClientEvent;
 import com.smn.app.protocol.message.ServerEvent;
 
 import javafx.fxml.FXML;

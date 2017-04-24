@@ -6,8 +6,8 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -21,11 +21,12 @@ public class FriendsControl extends VBox {
     @FXML
     protected TextField friendSearchField;
     @FXML
-    protected ListView<String> friendListView;
+    protected ListView<FriendListItem> friendListView;
 
-    // The list of all the friends of the user
-    protected ArrayList<String> friends;
-    protected ObservableList<String> listItems;
+    // The list of all the user friends
+    protected ArrayList<FriendListItem> friends;
+    // The actual items being viewed by the listview
+    protected ObservableList<FriendListItem> listItems;
 
     public FriendsControl() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/FriendsControl.fxml"));
@@ -35,17 +36,17 @@ public class FriendsControl extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            System.err.println("ERROR: Couldn't load the FriendsControl fxml filen\n\t" + e.getMessage());
+            System.err.println("ERROR: Couldn't load the FriendsControl fxml file\n\t" + e.getMessage());
             e.printStackTrace();
             Platform.exit();
             return;
         }
 
-        friends = new ArrayList<String>();
-        friends.add("Loading friends...");
+        friends = new ArrayList<>();
+        friends.add(new FriendListItem("Loading friends...", true));
 
         listItems = FXCollections.observableArrayList();
-        listItems.setAll(friends);
+        listItems.addAll(friends);
 
         friendListView.setItems(listItems);
 
@@ -57,12 +58,25 @@ public class FriendsControl extends VBox {
         });
     }
 
+    public void setOnFriendRequest(EventHandler eventHandler) {
+        friendListView.setCellFactory((param) -> {
+            FriendsListCell newCell = new FriendsListCell(eventHandler);
+            return newCell;
+        });
+    }
+
     /**
-     * Set's the results of a search and automatically views it.
-     * @param items The list of search results.
+     * Sets the items in the friends list. Also sets current viewable list to friends list.
+     * @param items The items to replace the ones in the current list.
      */
-    public void setSearchResults(List items) {
-        listItems.setAll(items);
+    public void setFriendsList(List<String> items) {
+        friends.clear();
+
+        for (String item : items) {
+            friends.add(new FriendListItem(item, true));
+        }
+
+        listItems.setAll(friends);
     }
 
     /**
@@ -73,26 +87,72 @@ public class FriendsControl extends VBox {
         friendSearchField.setOnAction(eventHandler);
     }
 
-    /**
-     * Sets the items in the friends list. Also sets current viewable list to friends list.
-     * @param items The items to replace the ones in the current list.
-     */
-    public void setFriendsList(List items) {
-        friends.clear();
-        friends.addAll(items);
-        listItems.setAll(friends);
-    }
-
-    /**
-     * Adds the items to the current items in the friends list. Also sets current viewable list to friends list.
-     * @param items The items to be added to the list.
-     */
-    public void addFirendsListItems(List items) {
-        friends.addAll(items);
-        listItems.setAll(friends);
-    }
-
     public String getSearchText() {
         return friendSearchField.getText();
+    }
+
+    /**
+     * Set's the results of a search and automatically views it.
+     * @param items The list of search results.
+     */
+    public void setSearchResults(List<String> items) {
+        listItems.clear();
+        for (String item : items) {
+            listItems.add(new FriendListItem(item, false));
+        }
+    }
+
+    /**
+     * Represents information about a single friend item in the list.
+     */
+    public static class FriendListItem {
+        public String username;
+        public boolean isFriend;
+
+        public FriendListItem(String name, boolean friend) {
+            username = name;
+            isFriend = friend;
+        }
+    }
+
+    /**
+     * Represents an actual cell in the friends list control.
+     */
+    private class FriendsListCell extends ListCell<FriendListItem> {
+        private HBox cellRoot;
+        private Label username;
+        private Button sendRequest;
+
+        public FriendsListCell(EventHandler onFriendRequest) {
+            cellRoot = new HBox();
+            username = new Label();
+            sendRequest = new Button();
+            sendRequest.setText("Send Request");
+
+            sendRequest.setOnAction(onFriendRequest);
+
+            cellRoot.getChildren().addAll(username, sendRequest);
+        }
+
+        @Override
+        public void updateItem(FriendListItem item, boolean empty) {
+            super.updateItem(item, empty);
+
+            setText(null);
+            if (empty || (item == null)) {
+                setGraphic(null);
+            } else {
+                username.setText(item.username);
+                if (item.isFriend) {
+                    sendRequest.setVisible(false);
+                    sendRequest.setManaged(false);
+                } else {
+                    sendRequest.setVisible(true);
+                    sendRequest.setManaged(true);
+                }
+
+                setGraphic(cellRoot);
+            }
+        }
     }
 }

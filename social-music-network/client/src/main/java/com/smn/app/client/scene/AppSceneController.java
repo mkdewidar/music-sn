@@ -3,8 +3,11 @@ package com.smn.app.client.scene;
 import com.smn.app.client.control.FriendsControl;
 import com.smn.app.protocol.message.ClientEvent;
 import com.smn.app.protocol.message.ServerEvent;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -28,6 +31,12 @@ public class AppSceneController extends SceneController {
         friendsControl.setOnFriendSearch((event) -> {
             searchForUser(friendsControl.getSearchText());
         });
+        friendsControl.setOnFriendRequest((event) -> {
+            // Traverses the tree structure of the cell to get the label containing the username
+            Label usernameLabel = (Label) ((Button) event.getTarget()).getParent().getChildrenUnmodifiable().get(0);
+
+            sendFriendRequest(usernameLabel.getText());
+        });
 
         networkController.sendRequest(new ClientEvent.FriendsList());
     }
@@ -38,7 +47,7 @@ public class AppSceneController extends SceneController {
             case USERFRIENDS:
                 ServerEvent.UserFriends userFriends = (ServerEvent.UserFriends) event;
                 ArrayList<String> friendList = new ArrayList<>();
-                if (userFriends.friends == null) {
+                if (userFriends.friends.length == 0) {
                     friendList.add("No Friends Yet!");
                 } else {
                     friendList.addAll(Arrays.asList(userFriends.friends));
@@ -65,5 +74,12 @@ public class AppSceneController extends SceneController {
         userSearch.searchString = searchString;
 
         this.networkController.sendRequest(userSearch);
+    }
+
+    private void sendFriendRequest(String receiver) {
+        ClientEvent.FriendRequest friendRequest = new ClientEvent.FriendRequest();
+        friendRequest.username = receiver;
+
+        this.networkController.sendRequest(friendRequest);
     }
 }

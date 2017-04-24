@@ -10,6 +10,7 @@ public abstract class ClientEvent {
         FRIENDSLIST,
         FRIENDREQUEST,
         USERSEARCH,
+        FRIENDREQUESTREPLY,
         VOID
     }
 
@@ -59,6 +60,18 @@ public abstract class ClientEvent {
 
         public FriendRequest() {
             type = Types.FRIENDREQUEST;
+        }
+    }
+
+    /**
+     * Signals a reply by the client to a friend request they had.
+     */
+    public static class FriendRequestReply extends ClientEvent {
+        public boolean accept;
+        public String sender;
+
+        public FriendRequestReply() {
+            type = Types.FRIENDREQUESTREPLY;
         }
     }
 

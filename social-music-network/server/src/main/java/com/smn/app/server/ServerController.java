@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class ServerController {
 
     // All the server cookies for all currently logged in users.
+    // Maps the username to the cookie
     public static HashMap<String, UserServerCookie> serverCookies;
     public DatabaseInterface database;
 
@@ -29,7 +30,7 @@ public class ServerController {
         ServerEvent serverEvent = new ServerEvent.Void();
 
         switch (clientEvent.type) {
-            case LOGIN:
+            case LOGIN: {
                 ClientEvent.Login loginRequest = (ClientEvent.Login) clientEvent;
                 if (database.authenticateLogin(loginRequest.username, loginRequest.password)) {
                     serverEvent = new ServerEvent.Ok();
@@ -39,7 +40,8 @@ public class ServerController {
                     serverEvent = new ServerEvent.InvalidAuth();
                 }
                 break;
-            case REGISTER:
+            }
+            case REGISTER: {
                 ClientEvent.Register registerRequest = (ClientEvent.Register) clientEvent;
                 if (database.registerUser(registerRequest.username, registerRequest.password,
                         registerRequest.name, registerRequest.email)) {
@@ -50,21 +52,47 @@ public class ServerController {
                     serverEvent = new ServerEvent.InvalidReg();
                 }
                 break;
-            case FRIENDSLIST:
+            }
+            case FRIENDSLIST: {
                 ServerEvent.UserFriends userFriends = new ServerEvent.UserFriends();
                 userFriends.friends = database.getFriends(userServerCookie.id);
 
                 serverEvent = userFriends;
                 break;
-            case USERSEARCH:
+
+            }
+            case USERSEARCH: {
                 ClientEvent.UserSearch userSearch = (ClientEvent.UserSearch) clientEvent;
 
                 ServerEvent.UserSearch friendSearch = new ServerEvent.UserSearch();
                 friendSearch.results = database.searchUsers(userServerCookie.id, userSearch.searchString);
 
                 serverEvent = friendSearch;
-
                 break;
+            }
+            case FRIENDREQUEST: {
+                ClientEvent.FriendRequest friendRequest = (ClientEvent.FriendRequest) clientEvent;
+
+                database.sendFriendRequest(userServerCookie.id, friendRequest.username);
+                // TODO: notify the other user of the friend request
+
+                serverEvent = new ServerEvent.Ok();
+                break;
+            }
+            case FRIENDREQUESTREPLY: {
+                ClientEvent.FriendRequestReply friendRequestReply = (ClientEvent.FriendRequestReply) clientEvent;
+
+                if (friendRequestReply.accept) {
+                    ServerEvent.UserFriends userFriends = new ServerEvent.UserFriends();
+
+                    userFriends.friends = database.acceptFriendRequest(userServerCookie.id, friendRequestReply.sender);
+                    //TODO: send an event to the sender telling them of the accepted request
+
+                    serverEvent = userFriends;
+                } else {
+                    database.rejectFriendRequest(userServerCookie.id, friendRequestReply.sender);
+                }
+            }
         }
 
         return serverEvent;
