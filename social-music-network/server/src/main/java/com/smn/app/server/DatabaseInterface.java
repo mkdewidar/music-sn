@@ -131,14 +131,11 @@ public class DatabaseInterface {
      * Accept a friend request in user made by sender.
      * @param user The current user.
      * @param sender The one who sent the friend request.
-     * @return Returns the new list of friends.
      */
-    public String[] acceptFriendRequest(String user, String sender) {
+    public void acceptFriendRequest(String user, String sender) {
         userInfoCollection.updateOne(Filters.eq("_id", user), Updates.addToSet("friends", sender));
         userInfoCollection.updateOne(Filters.eq("_id", user), Updates.pull("requests", sender));
         userInfoCollection.updateOne(Filters.eq("_id", sender), Updates.addToSet("friends", user));
-
-        return getFriends(user);
     }
 
     /**

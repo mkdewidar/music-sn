@@ -43,7 +43,7 @@ public class ProtocolImplementer {
         String msgType = (String) bMsg.get("type");
 
         switch (msgType) {
-            case "login":
+            case "login": {
                 ClientEvent.Login loginRequest = new ClientEvent.Login();
 
                 loginRequest.username = (String) bMsg.get("username");
@@ -51,8 +51,9 @@ public class ProtocolImplementer {
 
                 clientEvent = loginRequest;
                 break;
+            }
 
-            case "register":
+            case "register": {
                 ClientEvent.Register registerRequest = new ClientEvent.Register();
 
                 registerRequest.name = (String) bMsg.get("name");
@@ -62,28 +63,43 @@ public class ProtocolImplementer {
 
                 clientEvent = registerRequest;
                 break;
+            }
 
-            case "get-friends":
+            case "get-friends": {
                 ClientEvent.FriendsList friendsRequest = new ClientEvent.FriendsList();
 
                 clientEvent = friendsRequest;
                 break;
+            }
 
-            case "friend-request":
+            case "friend-request": {
                 ClientEvent.FriendRequest friendRequest = new ClientEvent.FriendRequest();
 
                 friendRequest.username = (String) bMsg.get("receiver");
 
                 clientEvent = friendRequest;
                 break;
+            }
 
-            case "user-search":
+            case "friend-request-reply": {
+                ClientEvent.FriendRequestReply requestReply = new ClientEvent.FriendRequestReply();
+
+                // The sender of the request
+                requestReply.sender = (String) bMsg.get("sender");
+                requestReply.accept = (boolean) bMsg.get("accept");
+
+                clientEvent = requestReply;
+                break;
+            }
+
+            case "user-search": {
                 ClientEvent.UserSearch userSearch = new ClientEvent.UserSearch();
 
                 userSearch.searchString = (String) bMsg.get("search-string");
 
                 clientEvent = userSearch;
                 break;
+            }
         }
 
         return clientEvent;
@@ -101,19 +117,22 @@ public class ProtocolImplementer {
         String msgType = (String) bMsg.get("type");
 
         switch (msgType) {
-            case StatusCodes.OK:
+            case StatusCodes.OK: {
                 serverEvent = new ServerEvent.Ok();
                 break;
+            }
 
-            case StatusCodes.INVALIDAUTH:
+            case StatusCodes.INVALIDAUTH: {
                 serverEvent = new ServerEvent.InvalidAuth();
                 break;
+            }
 
-            case StatusCodes.INVALIDREG:
+            case StatusCodes.INVALIDREG: {
                 serverEvent = new ServerEvent.InvalidReg();
                 break;
+            }
 
-            case "get-friends":
+            case "friends-list": {
                 ServerEvent.UserFriends friendListEvent = new ServerEvent.UserFriends();
 
                 BasicDBList friends = (BasicDBList) bMsg.get("friends");
@@ -134,8 +153,9 @@ public class ProtocolImplementer {
 
                 serverEvent = friendListEvent;
                 break;
+            }
 
-            case "user-search":
+            case "user-search-results": {
                 ServerEvent.UserSearch userSearch = new ServerEvent.UserSearch();
 
                 BasicDBList results = (BasicDBList) bMsg.get("results");
@@ -148,6 +168,7 @@ public class ProtocolImplementer {
 
                 serverEvent = userSearch;
                 break;
+            }
         }
 
         return serverEvent;
@@ -163,22 +184,25 @@ public class ProtocolImplementer {
         bMsg.put("type", StatusCodes.VOID);
 
         switch (serverEvent.type) {
-            case OK:
+            case OK: {
                 bMsg.put("type", StatusCodes.OK);
                 break;
+            }
 
-            case INVALIDAUTH:
+            case INVALIDAUTH: {
                 bMsg.put("type", StatusCodes.INVALIDAUTH);
                 break;
+            }
 
-            case INVALIDREG:
+            case INVALIDREG: {
                 bMsg.put("type", StatusCodes.INVALIDREG);
                 break;
+            }
 
-            case USERFRIENDS:
+            case USERFRIENDS: {
                 ServerEvent.UserFriends friendsListEvent = (ServerEvent.UserFriends) serverEvent;
 
-                bMsg.put("type", "get-friends");
+                bMsg.put("type", "friends-list");
                 if (friendsListEvent.friends != null) {
                     bMsg.put("friends", friendsListEvent.friends);
                 }
@@ -187,16 +211,18 @@ public class ProtocolImplementer {
                 }
 
                 break;
+            }
 
-            case USERSEARCH:
+            case USERSEARCH: {
                 ServerEvent.UserSearch userSearch = (ServerEvent.UserSearch) serverEvent;
 
-                bMsg.put("type", "user-search");
+                bMsg.put("type", "user-search-results");
                 if (userSearch.results != null) {
                     bMsg.put("results", userSearch.results);
                 }
 
                 break;
+            }
         }
 
         return JSON.serialize(bMsg);
@@ -212,7 +238,7 @@ public class ProtocolImplementer {
         bMsg.put("type", StatusCodes.VOID);
 
         switch (clientEvent.type) {
-            case LOGIN:
+            case LOGIN: {
                 ClientEvent.Login login = (ClientEvent.Login) clientEvent;
 
                 bMsg.put("type", "login");
@@ -221,7 +247,9 @@ public class ProtocolImplementer {
                 bMsg.put("password", login.password);
 
                 break;
-            case REGISTER:
+            }
+
+            case REGISTER: {
                 ClientEvent.Register register = (ClientEvent.Register) clientEvent;
 
                 bMsg.put("type", "register");
@@ -232,10 +260,14 @@ public class ProtocolImplementer {
                 bMsg.put("email", register.email);
 
                 break;
-            case FRIENDSLIST:
+            }
+
+            case FRIENDSLIST: {
                 bMsg.put("type", "get-friends");
                 break;
-            case FRIENDREQUEST:
+            }
+
+            case FRIENDREQUEST: {
                 ClientEvent.FriendRequest friendRequest = (ClientEvent.FriendRequest) clientEvent;
 
                 bMsg.put("type", "friend-request");
@@ -243,7 +275,20 @@ public class ProtocolImplementer {
                 bMsg.put("receiver", friendRequest.username);
 
                 break;
-            case USERSEARCH:
+            }
+
+            case FRIENDREQUESTREPLY: {
+                ClientEvent.FriendRequestReply requestReply = (ClientEvent.FriendRequestReply) clientEvent;
+
+                bMsg.put("type", "friend-request-reply");
+
+                bMsg.put("sender", requestReply.sender);
+                bMsg.put("accept", requestReply.accept);
+
+                break;
+            }
+
+            case USERSEARCH: {
                 ClientEvent.UserSearch userSearch = (ClientEvent.UserSearch) clientEvent;
 
                 bMsg.put("type", "user-search");
@@ -251,6 +296,7 @@ public class ProtocolImplementer {
                 bMsg.put("search-string", userSearch.searchString);
 
                 break;
+            }
         }
 
         return JSON.serialize(bMsg);

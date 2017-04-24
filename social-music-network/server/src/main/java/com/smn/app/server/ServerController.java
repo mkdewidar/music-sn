@@ -83,17 +83,21 @@ public class ServerController {
             }
             case FRIENDREQUESTREPLY: {
                 ClientEvent.FriendRequestReply friendRequestReply = (ClientEvent.FriendRequestReply) clientEvent;
+                ServerEvent.UserFriends userFriends = new ServerEvent.UserFriends();
 
                 if (friendRequestReply.accept) {
-                    ServerEvent.UserFriends userFriends = new ServerEvent.UserFriends();
 
-                    userFriends.friends = database.acceptFriendRequest(userServerCookie.id, friendRequestReply.sender);
+                    database.acceptFriendRequest(userServerCookie.id, friendRequestReply.sender);
                     //TODO: send an event to the sender telling them of the accepted request
 
-                    serverEvent = userFriends;
                 } else {
                     database.rejectFriendRequest(userServerCookie.id, friendRequestReply.sender);
                 }
+
+                userFriends.friends = database.getFriends(userServerCookie.id);
+                userFriends.requests = database.getFriendRequests(userServerCookie.id);
+
+                serverEvent = userFriends;
             }
         }
 
