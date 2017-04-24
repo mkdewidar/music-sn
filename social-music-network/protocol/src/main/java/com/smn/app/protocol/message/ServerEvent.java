@@ -10,7 +10,7 @@ public class ServerEvent {
         INVALIDREG,
         USERFRIENDS,
         USERSEARCH,
-        FRIENDREQUEST,
+        FRIENDREQUESTS,
         VOID
     }
 
@@ -66,6 +66,7 @@ public class ServerEvent {
      */
     public static class UserFriends extends ServerEvent {
         public String[] friends;
+        public String[] requests;
 
         public UserFriends() {
             type = Types.USERFRIENDS;
@@ -86,11 +87,11 @@ public class ServerEvent {
     /**
      * Signals a friend requests from other users.
      */
-    public static class FriendRequest extends ServerEvent {
+    public static class FriendRequests extends ServerEvent {
         public String[] requests;
 
-        public FriendRequest() {
-            type = Types.FRIENDREQUEST;
+        public FriendRequests() {
+            type = Types.FRIENDREQUESTS;
         }
     }
 }

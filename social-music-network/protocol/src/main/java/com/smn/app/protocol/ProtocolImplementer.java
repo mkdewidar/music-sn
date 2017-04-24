@@ -124,6 +124,14 @@ public class ProtocolImplementer {
                     friends.toArray(friendListEvent.friends);
                 }
 
+                BasicDBList requests = (BasicDBList) bMsg.get("requests");
+                if (requests == null) {
+                    friendListEvent.requests = null;
+                } else {
+                    friendListEvent.requests = new String[requests.size()];
+                    requests.toArray(friendListEvent.requests);
+                }
+
                 serverEvent = friendListEvent;
                 break;
 
@@ -173,6 +181,9 @@ public class ProtocolImplementer {
                 bMsg.put("type", "get-friends");
                 if (friendsListEvent.friends != null) {
                     bMsg.put("friends", friendsListEvent.friends);
+                }
+                if (friendsListEvent.friends != null) {
+                    bMsg.put("requests", friendsListEvent.requests);
                 }
 
                 break;

@@ -43,7 +43,7 @@ public class FriendsControl extends VBox {
         }
 
         friends = new ArrayList<>();
-        friends.add(new FriendListItem("Loading friends...", true));
+        friends.add(new FriendListItem("Loading friends...", CellType.FRIEND));
 
         listItems = FXCollections.observableArrayList();
         listItems.addAll(friends);
@@ -58,11 +58,19 @@ public class FriendsControl extends VBox {
         });
     }
 
-    public void setOnFriendRequest(EventHandler eventHandler) {
+    public void setOnCellActions(EventHandler onFriendRequest, EventHandler onAccept, EventHandler onReject) {
         friendListView.setCellFactory((param) -> {
-            FriendsListCell newCell = new FriendsListCell(eventHandler);
+            FriendsListCell newCell = new FriendsListCell(onFriendRequest, onAccept, onReject);
             return newCell;
         });
+    }
+
+    public void setFriendRequests(List<String> items) {
+        for (String item : items) {
+            friends.add(new FriendListItem(item, CellType.REQUEST));
+        }
+
+        listItems.setAll(friends);
     }
 
     /**
@@ -73,7 +81,7 @@ public class FriendsControl extends VBox {
         friends.clear();
 
         for (String item : items) {
-            friends.add(new FriendListItem(item, true));
+            friends.add(new FriendListItem(item, CellType.FRIEND));
         }
 
         listItems.setAll(friends);
@@ -98,7 +106,7 @@ public class FriendsControl extends VBox {
     public void setSearchResults(List<String> items) {
         listItems.clear();
         for (String item : items) {
-            listItems.add(new FriendListItem(item, false));
+            listItems.add(new FriendListItem(item, CellType.STRANGER));
         }
     }
 
@@ -107,12 +115,18 @@ public class FriendsControl extends VBox {
      */
     public static class FriendListItem {
         public String username;
-        public boolean isFriend;
+        public CellType type;
 
-        public FriendListItem(String name, boolean friend) {
+        public FriendListItem(String name, CellType cellType) {
             username = name;
-            isFriend = friend;
+            type = cellType;
         }
+    }
+
+    public enum CellType {
+        REQUEST,
+        FRIEND,
+        STRANGER
     }
 
     /**
@@ -121,17 +135,29 @@ public class FriendsControl extends VBox {
     private class FriendsListCell extends ListCell<FriendListItem> {
         private HBox cellRoot;
         private Label username;
-        private Button sendRequest;
 
-        public FriendsListCell(EventHandler onFriendRequest) {
+        private Button sendRequest;
+        private Button acceptRequest;
+        private Button rejectRequest;
+
+        public FriendsListCell(EventHandler onFriendRequest, EventHandler onAcceptRequest, EventHandler onRejectRequest) {
             cellRoot = new HBox();
             username = new Label();
-            sendRequest = new Button();
-            sendRequest.setText("Send Request");
 
+            sendRequest = new Button();
+            sendRequest.setText("+");
             sendRequest.setOnAction(onFriendRequest);
 
-            cellRoot.getChildren().addAll(username, sendRequest);
+            acceptRequest = new Button();
+            acceptRequest.setText("Yes");
+            acceptRequest.setOnAction(onAcceptRequest);
+
+            rejectRequest = new Button();
+            rejectRequest.setText("No");
+            rejectRequest.setOnAction(onRejectRequest);
+
+            cellRoot.getChildren().addAll(sendRequest, acceptRequest, rejectRequest, username);
+            cellRoot.setSpacing(5.0);
         }
 
         @Override
@@ -143,12 +169,39 @@ public class FriendsControl extends VBox {
                 setGraphic(null);
             } else {
                 username.setText(item.username);
-                if (item.isFriend) {
-                    sendRequest.setVisible(false);
-                    sendRequest.setManaged(false);
-                } else {
-                    sendRequest.setVisible(true);
-                    sendRequest.setManaged(true);
+                switch (item.type) {
+                    case STRANGER:
+                        sendRequest.setVisible(true);
+                        sendRequest.setManaged(true);
+
+                        acceptRequest.setVisible(false);
+                        acceptRequest.setManaged(false);
+
+                        rejectRequest.setVisible(false);
+                        rejectRequest.setVisible(false);
+                        break;
+
+                    case FRIEND:
+                        sendRequest.setVisible(false);
+                        sendRequest.setManaged(false);
+
+                        acceptRequest.setVisible(false);
+                        acceptRequest.setManaged(false);
+
+                        rejectRequest.setVisible(false);
+                        rejectRequest.setVisible(false);
+                        break;
+
+                    case REQUEST:
+                        sendRequest.setVisible(false);
+                        sendRequest.setManaged(false);
+
+                        acceptRequest.setVisible(true);
+                        acceptRequest.setManaged(true);
+
+                        rejectRequest.setVisible(true);
+                        rejectRequest.setVisible(true);
+                        break;
                 }
 
                 setGraphic(cellRoot);

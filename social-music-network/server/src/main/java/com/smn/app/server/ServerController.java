@@ -55,7 +55,9 @@ public class ServerController {
             }
             case FRIENDSLIST: {
                 ServerEvent.UserFriends userFriends = new ServerEvent.UserFriends();
+
                 userFriends.friends = database.getFriends(userServerCookie.id);
+                userFriends.requests = database.getFriendRequests(userServerCookie.id);
 
                 serverEvent = userFriends;
                 break;

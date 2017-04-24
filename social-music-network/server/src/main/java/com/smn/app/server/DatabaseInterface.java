@@ -106,6 +106,18 @@ public class DatabaseInterface {
         return results.toArray(new String[results.size()]);
     }
 
+    public String[] getFriendRequests(String username) {
+        Document userInfo = (Document) userInfoCollection.find(Filters.eq("_id", username)).first();
+        ArrayList<String> requests = (ArrayList<String>) userInfo.get("requests");
+
+        if (requests == null) {
+            // Mongo found nothing at that key so no friend requests
+            return null;
+        }
+
+        return requests.toArray(new String[requests.size()]);
+    }
+
     /**
      * Adds a friend request to receiver's document from sender.
      * @param sender The sender of the friend request.
