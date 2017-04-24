@@ -24,9 +24,23 @@ public class AppSceneController extends SceneController {
     @FXML
     protected FriendsControl friendsControl;
 
+    protected String username;
+    protected String password;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
+
+        // This completely overrides the parent classes handler, so we must do what it does as well
+        statusBanner.setOnReconnect((event) -> {
+            this.networkController.connect();
+
+            ClientEvent.Login login = new ClientEvent.Login();
+            login.username = username;
+            login.password = password;
+
+            this.networkController.sendRequest(login);
+        });
 
         friendsControl.setOnFriendSearch((event) -> {
             searchForUser(friendsControl.getSearchText());
@@ -91,6 +105,16 @@ public class AppSceneController extends SceneController {
                 });
                 break;
         }
+    }
+
+    /**
+     * Sets the details of the current logged in user.
+     * @param id The id of the current logged in user.
+     * @param pass The pass of the current logged in user.
+     */
+    public void setUserDetails(String id, String pass) {
+        username = id;
+        password = pass;
     }
 
     /**

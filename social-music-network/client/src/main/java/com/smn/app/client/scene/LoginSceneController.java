@@ -59,6 +59,8 @@ public class LoginSceneController extends SceneController {
             case OK:
                 Platform.runLater(() -> {
                     AppEvent.Login login = new AppEvent.Login();
+                    login.username = loginForm.getUsername();
+                    login.password = loginForm.getPassword();
                     rootNode.fireEvent(login);
                 });
                 break;

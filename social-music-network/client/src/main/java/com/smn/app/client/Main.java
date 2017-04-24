@@ -2,6 +2,8 @@ package com.smn.app.client;
 
 import com.smn.app.client.event.AppEvent;
 import com.smn.app.client.network.NetworkController;
+import com.smn.app.client.scene.AppSceneController;
+import com.smn.app.client.scene.LoginSceneController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -38,7 +40,7 @@ public class Main extends Application {
         primaryStage.show();
 
         primaryStage.addEventHandler(AppEvent.Login.Type, (event) -> {
-            loadAppScene();
+            loadAppScene(event);
         });
         primaryStage.addEventHandler(AppEvent.Logout.Type, (event) -> {
             loadLoginScene();
@@ -55,8 +57,9 @@ public class Main extends Application {
     private void loadLoginScene() {
         Parent rootNode;
         try {
-            System.out.println(getClass().getResource("/LoginScene.fxml"));
-            rootNode = FXMLLoader.load(getClass().getResource("/LoginScene.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginScene.fxml"));
+
+            rootNode = loader.load();
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't load login root node\n\t" + e.getMessage() + "\n");
             e.printStackTrace();
@@ -71,10 +74,15 @@ public class Main extends Application {
     /**
      * Sets the scene to be the main app scene, this is after a successful login.
      */
-    private void loadAppScene() {
+    private void loadAppScene(AppEvent.Login event) {
         Parent rootNode;
         try {
-            rootNode = FXMLLoader.load(getClass().getResource("/AppScene.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AppScene.fxml"));
+
+            rootNode = loader.load();
+
+            AppSceneController controller = loader.getController();
+            controller.setUserDetails(event.username, event.password);
         } catch (IOException e) {
             System.err.println("ERROR: Couldn't load app root node\n\t" + e.getMessage() + "\n");
             e.printStackTrace();

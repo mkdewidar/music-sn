@@ -58,6 +58,12 @@ public class FriendsControl extends VBox {
         });
     }
 
+    /**
+     * Sets the set of event handlers called when buttons on the cell are pressed.
+     * @param onFriendRequest Handler called when the send friend request button is pressed.
+     * @param onAccept Handler called when the accept friend request button is pressed.
+     * @param onReject Handler called when the reject friend request button is pressed.
+     */
     public void setOnCellActions(EventHandler onFriendRequest, EventHandler onAccept, EventHandler onReject) {
         friendListView.setCellFactory((param) -> {
             FriendsListCell newCell = new FriendsListCell(onFriendRequest, onAccept, onReject);
@@ -65,6 +71,10 @@ public class FriendsControl extends VBox {
         });
     }
 
+    /**
+     * Adds the friend requests to the list of items.
+     * @param items The names of the users who have sent friend requests to this one.
+     */
     public void setFriendRequests(List<String> items) {
         for (String item : items) {
             friends.add(new FriendListItem(item, CellType.REQUEST));
