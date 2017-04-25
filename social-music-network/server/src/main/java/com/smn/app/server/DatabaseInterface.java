@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * The class that allows access to the databases functionality.
@@ -189,6 +190,24 @@ public class DatabaseInterface {
         ArrayList<String> channels = (ArrayList<String>) userInfo.get("channels");
 
         return channels.toArray(new String[channels.size()]);
+    }
+
+    /**
+     * Gets all the messages in the provided channel.
+     * @param channelId The id of the channel.
+     * @return An array of maps of strings to objects, each map being a message, maps string to object.
+     */
+    public Map<String, Object>[] getMessages(String channelId) {
+        Document channel = (Document) channelCollection.find(Filters.eq("_id", channelId)).first();
+        ArrayList<BasicDBObject> messagesList = (ArrayList<BasicDBObject>) channel.get("messages");
+
+        Map<String, Object>[] messagesMap = new Map[messagesList.size()];
+
+        for (int msgIndex = 0; msgIndex < messagesList.size(); msgIndex++) {
+            messagesMap[msgIndex] = messagesList.get(msgIndex).toMap();
+        }
+
+        return messagesMap;
     }
 
     /**

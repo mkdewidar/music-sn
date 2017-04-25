@@ -154,6 +154,34 @@ public class AppSceneController extends SceneController {
                 });
                 break;
             }
+
+            case INVALIDNEWCHANNEL: {
+                channelControl.createChannelControl.setInvalidName(true);
+                break;
+            }
+
+            case CHANNELMESSAGES: {
+                ServerEvent.ChannelMessages channelMessages = (ServerEvent.ChannelMessages) event;
+
+                // The user may have switched channels in the time between the request and getting the data
+                if (channelMessages.channelId.equals(currentChannelId)) {
+                    Platform.runLater(() -> {
+                        messagingControl.setMessages(channelMessages.messages);
+                    });
+                }
+
+                break;
+            }
+
+            case OK: {
+                switch (lastMadeRequest) {
+                    // the server has recorded the message we can show it's been sent.
+                    case SENDMESSAGE: {
+                        messagingControl.addCurrentMessage();
+                    }
+                }
+                break;
+            }
         }
     }
 
@@ -233,6 +261,11 @@ public class AppSceneController extends SceneController {
      * Gets the messages for the currently selected channel.
      */
     protected void getChannelMessages() {
+        ClientEvent.GetMessages getMessages = new ClientEvent.GetMessages();
+
+        getMessages.channelId = currentChannelId;
+
+        this.networkController.sendClientEvent(getMessages);
     }
 
     /**

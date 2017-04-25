@@ -15,6 +15,7 @@ public abstract class ClientEvent {
         FRIENDREQUESTREPLY,
         CHANNELLIST,
         CREATECHANNEL,
+        GETMESSAGES,
         SENDMESSAGE,
         VOID
     }
@@ -110,6 +111,17 @@ public abstract class ClientEvent {
 
         public CreateChannel() {
             type = Types.CREATECHANNEL;
+        }
+    }
+
+    /**
+     * A request for all the messages for this channel.
+     */
+    public static class GetMessages extends ClientEvent {
+        public String channelId;
+
+        public GetMessages() {
+            type = Types.GETMESSAGES;
         }
     }
 

@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Custom control for managing the messages for a channel.
@@ -75,6 +76,23 @@ public class MessagingControl extends VBox {
      */
     public void addCurrentMessage() {
         messages.add(currentMessage);
+    }
+
+    /**
+     * Sets the messages to be the current messages in the message control.
+     * The most recent should be the last in the array.
+     * The map should be a map of message field to the contents. For now that is:
+     *      sender : String of senders username
+     *      timestamp : Date of timestamp
+     *      contents : String with contents of the message
+     * @param msgs The messages to be set in the control
+     */
+    public void setMessages(Map<String, Object>[] msgs) {
+        for (Map<String, Object> message : msgs) {
+            messages.add(new Message((String) message.get("sender"),
+                    (String) message.get("contents"),
+                    (Date) message.get("timestamp")));
+        }
     }
 
     /**

@@ -116,6 +116,17 @@ public class ServerController {
                 break;
             }
 
+            case GETMESSAGES: {
+                ClientEvent.GetMessages getMessages = (ClientEvent.GetMessages) clientEvent;
+
+                ServerEvent.ChannelMessages channelMessages = new ServerEvent.ChannelMessages();
+                channelMessages.messages = database.getMessages(getMessages.channelId);
+                channelMessages.channelId = getMessages.channelId;
+
+                serverEvent = channelMessages;
+                break;
+            }
+
             case CHANNELLIST: {
                 ServerEvent.UserChannels userChannels = new ServerEvent.UserChannels();
 

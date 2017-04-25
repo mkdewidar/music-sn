@@ -1,6 +1,7 @@
 package com.smn.app.protocol;
 
 import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.util.JSON;
 import com.smn.app.protocol.message.ClientEvent;
 import com.smn.app.protocol.message.ServerEvent;
@@ -104,6 +105,11 @@ public class ProtocolImplementer {
                 break;
             }
 
+            case "get-channels": {
+                clientEvent = new ClientEvent.ChannelList();
+                break;
+            }
+
             case "create-channel": {
                 ClientEvent.CreateChannel createChannel = new ClientEvent.CreateChannel();
 
@@ -117,8 +123,13 @@ public class ProtocolImplementer {
                 break;
             }
 
-            case "get-channels": {
-                clientEvent = new ClientEvent.ChannelList();
+            case "get-messages": {
+
+                ClientEvent.GetMessages getMessages = new ClientEvent.GetMessages();
+
+                getMessages.channelId = (String) bMsg.get("channel-id");
+
+                clientEvent = getMessages;
                 break;
             }
 
@@ -213,7 +224,11 @@ public class ProtocolImplementer {
                 ServerEvent.ChannelMessages channelMessages = new ServerEvent.ChannelMessages();
 
                 channelMessages.channelId = (String) bMsg.get("channel-id");
-                channelMessages.messages = (Map<String, Object>[]) bMsg.get("messages");
+                BasicDBList messagesList = (BasicDBList) bMsg.get("messages");
+                channelMessages.messages = new Map[messagesList.size()];
+                for (int msgIndex = 0; msgIndex < messagesList.size(); msgIndex++) {
+                    channelMessages.messages[msgIndex] = ((BasicDBObject) messagesList.get(msgIndex)).toMap();
+                }
 
                 serverEvent = channelMessages;
                 break;
@@ -395,6 +410,16 @@ public class ProtocolImplementer {
                 bMsg.put("creator", createChannel.creator);
                 bMsg.put("name", createChannel.channelName);
                 bMsg.put("members", createChannel.members);
+
+                break;
+            }
+
+            case GETMESSAGES: {
+                ClientEvent.GetMessages getMessages = (ClientEvent.GetMessages) clientEvent;
+
+                bMsg.put("type", "get-messages");
+
+                bMsg.put("channel-id", getMessages.channelId);
 
                 break;
             }
