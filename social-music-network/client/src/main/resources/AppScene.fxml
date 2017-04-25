@@ -3,13 +3,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import com.smn.app.client.control.StatusControl?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import com.smn.app.client.control.FriendsControl?>
 <?import javafx.scene.control.MenuBar?>
-
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import com.smn.app.client.control.ChannelControl?>
+<?import com.smn.app.client.control.MessagingControl?>
+
 <VBox xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/8.0.121"
       fx:controller="com.smn.app.client.scene.AppSceneController" fx:id="rootNode" prefWidth="750" prefHeight="550">
     <MenuBar>
@@ -26,8 +26,7 @@
     <SplitPane dividerPositions="0.25, 0.75" VBox.vgrow="ALWAYS">
         <items>
             <ChannelControl fx:id="channelControl" />
-            <AnchorPane>
-            </AnchorPane>
+            <MessagingControl fx:id="messagingControl" />
             <FriendsControl fx:id="friendsControl" />
         </items>
     </SplitPane>

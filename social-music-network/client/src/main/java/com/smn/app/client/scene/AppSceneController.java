@@ -2,6 +2,7 @@ package com.smn.app.client.scene;
 
 import com.smn.app.client.control.ChannelControl;
 import com.smn.app.client.control.FriendsControl;
+import com.smn.app.client.control.MessagingControl;
 import com.smn.app.client.event.AppEvent;
 import com.smn.app.protocol.message.ClientEvent;
 import com.smn.app.protocol.message.ServerEvent;
@@ -15,6 +16,7 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 /**
@@ -27,10 +29,14 @@ public class AppSceneController extends SceneController {
     protected FriendsControl friendsControl;
     @FXML
     protected ChannelControl channelControl;
+    @FXML
+    protected MessagingControl messagingControl;
 
     // The type of the last made request, helps determine how to react to the current server event
     // if there are many ways to reply to it e.g what to do with a server OK event.
     protected ClientEvent.Types lastMadeRequest;
+
+    protected String currentChannelId;
 
     protected String username;
     protected String password;
@@ -49,6 +55,8 @@ public class AppSceneController extends SceneController {
 
             this.networkController.sendClientEvent(login);
             lastMadeRequest = login.type;
+
+            pullUserData();
         });
 
         friendsControl.setOnFriendSearch((event) -> {
@@ -80,13 +88,15 @@ public class AppSceneController extends SceneController {
                     channelControl.createChannelControl.getChannelMembers());
         });
         channelControl.setOnChannelSelected((observable, oldValue, newValue) -> {
+            currentChannelId = ((ChannelControl.ChannelListItem) newValue).id;
+            getChannelMessages();
         });
 
-        this.networkController.sendClientEvent(new ClientEvent.FriendsList());
-        lastMadeRequest = ClientEvent.Types.FRIENDSLIST;
+        messagingControl.setOnSendMessage((event) -> {
+            sendMessageToChannel();
+        });
 
-        this.networkController.sendClientEvent(new ClientEvent.ChannelList());
-        lastMadeRequest = ClientEvent.Types.CHANNELLIST;
+        pullUserData();
     }
 
     /**
@@ -158,6 +168,17 @@ public class AppSceneController extends SceneController {
     }
 
     /**
+     * Updates the friend and channel lists for the current user.
+     */
+    public void pullUserData() {
+        this.networkController.sendClientEvent(new ClientEvent.FriendsList());
+        lastMadeRequest = ClientEvent.Types.FRIENDSLIST;
+
+        this.networkController.sendClientEvent(new ClientEvent.ChannelList());
+        lastMadeRequest = ClientEvent.Types.CHANNELLIST;
+    }
+
+    /**
      * Sends a request to search by the search criteria provided.
      * @param searchString The search criteria to search by in regex.
      */
@@ -206,6 +227,27 @@ public class AppSceneController extends SceneController {
         createChannel.members = memberNames;
 
         this.networkController.sendClientEvent(createChannel);
+    }
+
+    /**
+     * Gets the messages for the currently selected channel.
+     */
+    protected void getChannelMessages() {
+    }
+
+    /**
+     * Sends the current message in the message control to the server.
+     */
+    protected void sendMessageToChannel() {
+        ClientEvent.SendMessage sendMessage = new ClientEvent.SendMessage();
+
+        sendMessage.channelId = currentChannelId;
+        sendMessage.message = new HashMap<>();
+        sendMessage.message.put("sender", messagingControl.currentMessage.sender);
+        sendMessage.message.put("message", messagingControl.currentMessage.message);
+        sendMessage.message.put("timestamp", messagingControl.currentMessage.timestamp);
+
+        this.networkController.sendClientEvent(sendMessage);
     }
 
     /**
