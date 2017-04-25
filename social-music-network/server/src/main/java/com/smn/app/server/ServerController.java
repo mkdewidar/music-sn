@@ -3,6 +3,7 @@ package com.smn.app.server;
 import com.smn.app.protocol.message.ClientEvent;
 import com.smn.app.protocol.message.ServerEvent;
 
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -11,7 +12,7 @@ import java.util.HashMap;
 public class ServerController {
 
     // All the server cookies for all currently logged in users.
-    // Maps the username to the cookie
+    // Maps the creator to the cookie
     public static HashMap<String, UserServerCookie> serverCookies;
     public DatabaseInterface database;
 
@@ -98,6 +99,41 @@ public class ServerController {
                 userFriends.requests = database.getFriendRequests(userServerCookie.id);
 
                 serverEvent = userFriends;
+                break;
+            }
+
+            case CREATECHANNEL: {
+                ClientEvent.CreateChannel createChannel = (ClientEvent.CreateChannel) clientEvent;
+
+                if (database.createChannel(createChannel.creator, createChannel.channelName, createChannel.members)) {
+                    ServerEvent.UserChannels channelList = new ServerEvent.UserChannels();
+                    channelList.channels = database.getChannels(userServerCookie.id);
+                    serverEvent = channelList;
+                } else {
+                    serverEvent = new ServerEvent.InvalidNewChannel();
+                }
+
+                break;
+            }
+
+            case CHANNELLIST: {
+                ServerEvent.UserChannels userChannels = new ServerEvent.UserChannels();
+
+                userChannels.channels = database.getChannels(userServerCookie.id);
+
+                serverEvent = userChannels;
+                break;
+            }
+
+            case SENDMESSAGE: {
+                ClientEvent.SendMessage sendMessage = (ClientEvent.SendMessage) clientEvent;
+
+                database.addMessage((String) sendMessage.message.get("sender"), sendMessage.channelId,
+                        (String) sendMessage.message.get("message"), (Date) sendMessage.message.get("timestamp"));
+
+                serverEvent = new ServerEvent.Ok();
+
+                break;
             }
         }
 

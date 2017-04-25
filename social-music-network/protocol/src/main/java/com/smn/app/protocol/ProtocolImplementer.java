@@ -7,6 +7,9 @@ import com.smn.app.protocol.message.ServerEvent;
 import org.bson.BSONObject;
 import org.bson.BasicBSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Class that implements the application layer protocol.
  * It converts a system event to a message ready to be sent over the network.
@@ -46,7 +49,7 @@ public class ProtocolImplementer {
             case "login": {
                 ClientEvent.Login loginRequest = new ClientEvent.Login();
 
-                loginRequest.username = (String) bMsg.get("username");
+                loginRequest.username = (String) bMsg.get("creator");
                 loginRequest.password = (String) bMsg.get("password");
 
                 clientEvent = loginRequest;
@@ -57,7 +60,7 @@ public class ProtocolImplementer {
                 ClientEvent.Register registerRequest = new ClientEvent.Register();
 
                 registerRequest.name = (String) bMsg.get("name");
-                registerRequest.username = (String) bMsg.get("username");
+                registerRequest.username = (String) bMsg.get("creator");
                 registerRequest.password = (String) bMsg.get("password");
                 registerRequest.email = (String) bMsg.get("email");
 
@@ -98,6 +101,37 @@ public class ProtocolImplementer {
                 userSearch.searchString = (String) bMsg.get("search-string");
 
                 clientEvent = userSearch;
+                break;
+            }
+
+            case "create-channel": {
+                ClientEvent.CreateChannel createChannel = new ClientEvent.CreateChannel();
+
+                createChannel.creator = (String) bMsg.get("creator");
+                createChannel.channelName = (String) bMsg.get("name");
+                BasicDBList channelMembers = (BasicDBList) bMsg.get("members");
+                createChannel.members = new String[channelMembers.size()];
+                channelMembers.toArray(createChannel.members);
+
+                clientEvent = createChannel;
+                break;
+            }
+
+            case "get-channels": {
+                clientEvent = new ClientEvent.ChannelList();
+                break;
+            }
+
+            case "send-message": {
+                ClientEvent.SendMessage sendMessage = new ClientEvent.SendMessage();
+
+                sendMessage.channelId = (String) bMsg.get("channel-id");
+                sendMessage.message = new HashMap();
+                sendMessage.message.put("sender", bMsg.get("sender"));
+                sendMessage.message.put("message", bMsg.get("message"));
+                sendMessage.message.put("timestamp", bMsg.get("timestamp"));
+
+                clientEvent = sendMessage;
                 break;
             }
         }
@@ -169,6 +203,32 @@ public class ProtocolImplementer {
                 serverEvent = userSearch;
                 break;
             }
+
+            case "invalid-new-channel": {
+                serverEvent = new ServerEvent.InvalidNewChannel();
+                break;
+            }
+
+            case "channel-messages": {
+                ServerEvent.ChannelMessages channelMessages = new ServerEvent.ChannelMessages();
+
+                channelMessages.channelId = (String) bMsg.get("channel-id");
+                channelMessages.messages = (Map<String, Object>[]) bMsg.get("messages");
+
+                serverEvent = channelMessages;
+                break;
+            }
+
+            case "channel-list": {
+                ServerEvent.UserChannels userChannels = new ServerEvent.UserChannels();
+
+                BasicDBList channelsList = (BasicDBList) bMsg.get("channels");
+                userChannels.channels = new String[channelsList.size()];
+                channelsList.toArray(userChannels.channels);
+
+                serverEvent = userChannels;
+                break;
+            }
         }
 
         return serverEvent;
@@ -223,6 +283,35 @@ public class ProtocolImplementer {
 
                 break;
             }
+
+            case INVALIDNEWCHANNEL: {
+                ServerEvent.InvalidNewChannel invalidNewChannel = (ServerEvent.InvalidNewChannel) serverEvent;
+
+                bMsg.put("type", "invalid-new-channel");
+
+                break;
+            }
+
+            case CHANNELMESSAGES: {
+                ServerEvent.ChannelMessages channelMessages = (ServerEvent.ChannelMessages) serverEvent;
+
+                bMsg.put("type", "channel-messages");
+
+                bMsg.put("channel-id", channelMessages.channelId);
+                bMsg.put("messages", channelMessages.messages);
+
+                break;
+            }
+
+            case USERCHANNELS: {
+                ServerEvent.UserChannels userChannels = (ServerEvent.UserChannels) serverEvent;
+
+                bMsg.put("type", "channel-list");
+
+                bMsg.put("channels", userChannels.channels);
+
+                break;
+            }
         }
 
         return JSON.serialize(bMsg);
@@ -243,7 +332,7 @@ public class ProtocolImplementer {
 
                 bMsg.put("type", "login");
 
-                bMsg.put("username", login.username);
+                bMsg.put("creator", login.username);
                 bMsg.put("password", login.password);
 
                 break;
@@ -254,7 +343,7 @@ public class ProtocolImplementer {
 
                 bMsg.put("type", "register");
 
-                bMsg.put("username", register.username);
+                bMsg.put("creator", register.username);
                 bMsg.put("password", register.password);
                 bMsg.put("name", register.name);
                 bMsg.put("email", register.email);
@@ -295,6 +384,33 @@ public class ProtocolImplementer {
 
                 bMsg.put("search-string", userSearch.searchString);
 
+                break;
+            }
+
+            case CREATECHANNEL: {
+                ClientEvent.CreateChannel createChannel = (ClientEvent.CreateChannel) clientEvent;
+
+                bMsg.put("type", "create-channel");
+
+                bMsg.put("creator", createChannel.creator);
+                bMsg.put("name", createChannel.channelName);
+                bMsg.put("members", createChannel.members);
+
+                break;
+            }
+
+            case SENDMESSAGE: {
+                ClientEvent.SendMessage sendMessage = (ClientEvent.SendMessage) clientEvent;
+
+                bMsg.put("type", "send-message");
+
+                bMsg.put("message", sendMessage.message);
+
+                break;
+            }
+
+            case CHANNELLIST: {
+                bMsg.put("type", "get-channels");
                 break;
             }
         }

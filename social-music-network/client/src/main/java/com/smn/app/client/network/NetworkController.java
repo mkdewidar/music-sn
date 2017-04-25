@@ -121,7 +121,7 @@ public class NetworkController {
      *
      * @return The response for the clientEvent made.
      */
-    public void sendRequest(ClientEvent clientEvent) {
+    public void sendClientEvent(ClientEvent clientEvent) {
         String msg = protocol.pack(clientEvent);
         if (msg.equals(ProtocolImplementer.StatusCodes.VOID))
             System.err.println("ERROR: This client event is VOID");

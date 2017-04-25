@@ -1,5 +1,6 @@
 package com.smn.app.client.scene;
 
+import com.smn.app.client.control.ChannelControl;
 import com.smn.app.client.control.FriendsControl;
 import com.smn.app.client.event.AppEvent;
 import com.smn.app.protocol.message.ClientEvent;
@@ -24,6 +25,12 @@ public class AppSceneController extends SceneController {
     protected VBox rootNode;
     @FXML
     protected FriendsControl friendsControl;
+    @FXML
+    protected ChannelControl channelControl;
+
+    // The type of the last made request, helps determine how to react to the current server event
+    // if there are many ways to reply to it e.g what to do with a server OK event.
+    protected ClientEvent.Types lastMadeRequest;
 
     protected String username;
     protected String password;
@@ -32,7 +39,7 @@ public class AppSceneController extends SceneController {
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
 
-        // This completely overrides the parent classes handler, so we must do what it does as well
+        // This completely overrides the parent classes handler, so we must do the connect ourselves
         statusBanner.setOnReconnect((event) -> {
             this.networkController.connect();
 
@@ -40,7 +47,8 @@ public class AppSceneController extends SceneController {
             login.username = username;
             login.password = password;
 
-            this.networkController.sendRequest(login);
+            this.networkController.sendClientEvent(login);
+            lastMadeRequest = login.type;
         });
 
         friendsControl.setOnFriendSearch((event) -> {
@@ -48,7 +56,7 @@ public class AppSceneController extends SceneController {
         });
         friendsControl.setOnCellActions((event) -> {
             // -- On Friend Request -- //
-            // Traverses the tree structure of the cell to get the label containing the username
+            // Traverses the tree structure of the cell to get the label containing the creator
             // in this case that is the second child to Hbox
             Label usernameLabel = (Label) ((Button) event.getTarget()).getParent().getChildrenUnmodifiable().get(3);
 
@@ -67,7 +75,18 @@ public class AppSceneController extends SceneController {
             friendRequestReply(usernameLabel.getText(), false);
         });
 
-        networkController.sendRequest(new ClientEvent.FriendsList());
+        channelControl.setOnCreateChannel((event) -> {
+            createChannel(channelControl.createChannelControl.getChannelName(),
+                    channelControl.createChannelControl.getChannelMembers());
+        });
+        channelControl.setOnChannelSelected((observable, oldValue, newValue) -> {
+        });
+
+        this.networkController.sendClientEvent(new ClientEvent.FriendsList());
+        lastMadeRequest = ClientEvent.Types.FRIENDSLIST;
+
+        this.networkController.sendClientEvent(new ClientEvent.ChannelList());
+        lastMadeRequest = ClientEvent.Types.CHANNELLIST;
     }
 
     /**
@@ -77,7 +96,7 @@ public class AppSceneController extends SceneController {
     @Override
     public void handleServerEvent(ServerEvent event) {
         switch (event.type) {
-            case USERFRIENDS:
+            case USERFRIENDS: {
                 ServerEvent.UserFriends userFriends = (ServerEvent.UserFriends) event;
 
                 ArrayList<String> friendList = new ArrayList<>();
@@ -96,7 +115,9 @@ public class AppSceneController extends SceneController {
                     friendsControl.setFriendRequests(requestList);
                 });
                 break;
-            case USERSEARCH:
+            }
+
+            case USERSEARCH: {
                 ServerEvent.UserSearch userSearch = (ServerEvent.UserSearch) event;
                 ArrayList<String> results = new ArrayList();
                 results.addAll(Arrays.asList(userSearch.results));
@@ -105,6 +126,24 @@ public class AppSceneController extends SceneController {
                     friendsControl.setSearchResults(results);
                 });
                 break;
+            }
+
+            case USERCHANNELS: {
+                ServerEvent.UserChannels userChannels = (ServerEvent.UserChannels) event;
+
+                ArrayList<String> channels = new ArrayList<>();
+                if (userChannels.channels.length == 0) {
+                    // The "a_" is necessary due to the structure of a channel id
+                    channels.add("a_No Channels yet!");
+                } else {
+                    channels.addAll(Arrays.asList(userChannels.channels));
+                }
+
+                Platform.runLater(() -> {
+                    channelControl.setChannelList(channels);
+                });
+                break;
+            }
         }
     }
 
@@ -126,7 +165,8 @@ public class AppSceneController extends SceneController {
         ClientEvent.UserSearch userSearch = new ClientEvent.UserSearch();
         userSearch.searchString = searchString;
 
-        this.networkController.sendRequest(userSearch);
+        this.networkController.sendClientEvent(userSearch);
+        lastMadeRequest = userSearch.type;
     }
 
     /**
@@ -137,7 +177,8 @@ public class AppSceneController extends SceneController {
         ClientEvent.FriendRequest friendRequest = new ClientEvent.FriendRequest();
         friendRequest.username = receiver;
 
-        this.networkController.sendRequest(friendRequest);
+        this.networkController.sendClientEvent(friendRequest);
+        lastMadeRequest = friendRequest.type;
     }
 
     /**
@@ -151,7 +192,20 @@ public class AppSceneController extends SceneController {
         reply.sender = receiver;
         reply.accept = accept;
 
-        this.networkController.sendRequest(reply);
+        this.networkController.sendClientEvent(reply);
+        lastMadeRequest = reply.type;
+    }
+
+    /**
+     * Sends a request to create a new channel.
+     */
+    protected void createChannel(String channelName, String[] memberNames) {
+        ClientEvent.CreateChannel createChannel = new ClientEvent.CreateChannel();
+        createChannel.creator = username;
+        createChannel.channelName = channelName;
+        createChannel.members = memberNames;
+
+        this.networkController.sendClientEvent(createChannel);
     }
 
     /**

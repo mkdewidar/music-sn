@@ -1,5 +1,7 @@
 package com.smn.app.protocol.message;
 
+import java.util.Map;
+
 /**
  * All the events that could happen to the server.
  */
@@ -11,13 +13,16 @@ public abstract class ClientEvent {
         FRIENDREQUEST,
         USERSEARCH,
         FRIENDREQUESTREPLY,
+        CHANNELLIST,
+        CREATECHANNEL,
+        SENDMESSAGE,
         VOID
     }
 
     public ClientEvent.Types type;
 
     /**
-     * Sent by the client when there is an attempt to login or verify the username and password combination.
+     * Sent by the client when there is an attempt to login or verify the creator and password combination.
      */
     public static class Login extends ClientEvent {
         public String username;
@@ -83,6 +88,40 @@ public abstract class ClientEvent {
 
         public UserSearch() {
             type = Types.USERSEARCH;
+        }
+    }
+
+    /**
+     * Represents a request to get a list of all the channels the user is in.
+     */
+    public static class ChannelList extends ClientEvent {
+        public ChannelList() {
+            type = Types.CHANNELLIST;
+        }
+    }
+
+    /**
+     * Represents a client attempt to create a channel.
+     */
+    public static class CreateChannel extends ClientEvent {
+        public String creator;
+        public String channelName;
+        public String[] members;
+
+        public CreateChannel() {
+            type = Types.CREATECHANNEL;
+        }
+    }
+
+    /**
+     * Signals the client wanting to send a message to a specific channel.
+     */
+    public static class SendMessage extends ClientEvent {
+        public String channelId;
+        public Map<String, Object> message;
+
+        public SendMessage() {
+            type = Types.SENDMESSAGE;
         }
     }
 

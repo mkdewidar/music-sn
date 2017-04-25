@@ -40,7 +40,7 @@ public class LoginSceneController extends SceneController {
         loginRequest.username = username;
         loginRequest.password = password;
 
-        this.networkController.sendRequest(loginRequest);
+        this.networkController.sendClientEvent(loginRequest);
     }
 
     public void registerUser(String name, String userId, String pass, String email) {
@@ -50,7 +50,7 @@ public class LoginSceneController extends SceneController {
         registerRequest.email = email;
         registerRequest.name = name;
 
-        this.networkController.sendRequest(registerRequest);
+        this.networkController.sendClientEvent(registerRequest);
     }
 
     @Override

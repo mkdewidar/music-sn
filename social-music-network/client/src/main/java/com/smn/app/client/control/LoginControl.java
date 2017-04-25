@@ -55,8 +55,8 @@ public class LoginControl extends VBox {
     }
 
     /**
-     * Accessor function to get the username.
-     * @return The username of the user as a String.
+     * Accessor function to get the creator.
+     * @return The creator of the user as a String.
      */
     public String getUsername() {
         return usernameField.getText();

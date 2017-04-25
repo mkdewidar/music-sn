@@ -9,6 +9,7 @@
 
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
+<?import com.smn.app.client.control.ChannelControl?>
 <VBox xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/8.0.121"
       fx:controller="com.smn.app.client.scene.AppSceneController" fx:id="rootNode" prefWidth="750" prefHeight="550">
     <MenuBar>
@@ -24,8 +25,7 @@
     <StatusControl fx:id="statusBanner" />
     <SplitPane dividerPositions="0.25, 0.75" VBox.vgrow="ALWAYS">
         <items>
-            <AnchorPane>
-            </AnchorPane>
+            <ChannelControl fx:id="channelControl" />
             <AnchorPane>
             </AnchorPane>
             <FriendsControl fx:id="friendsControl" />

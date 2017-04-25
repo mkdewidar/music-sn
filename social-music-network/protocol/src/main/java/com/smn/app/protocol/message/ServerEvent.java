@@ -1,5 +1,7 @@
 package com.smn.app.protocol.message;
 
+import java.util.Map;
+
 /**
  * A response that the server can give the client.
  */
@@ -10,7 +12,9 @@ public class ServerEvent {
         INVALIDREG,
         USERFRIENDS,
         USERSEARCH,
-        FRIENDREQUESTS,
+        USERCHANNELS,
+        CHANNELMESSAGES,
+        INVALIDNEWCHANNEL,
         VOID
     }
 
@@ -40,7 +44,7 @@ public class ServerEvent {
     }
 
     /**
-     * Represents a failed authentication, the username and password are not valid.
+     * Represents a failed authentication, the creator and password are not valid.
      */
     public static class InvalidAuth extends ServerEvent {
         public String desc = "";
@@ -85,13 +89,38 @@ public class ServerEvent {
     }
 
     /**
-     * Signals a friend requests from other users.
+     * A list of all the channels the current user is in.
      */
-    public static class FriendRequests extends ServerEvent {
-        public String[] requests;
+    public static class UserChannels extends ServerEvent {
+        public String[] channels;
 
-        public FriendRequests() {
-            type = Types.FRIENDREQUESTS;
+        public UserChannels() {
+            type = Types.USERCHANNELS;
+        }
+    }
+
+    /**
+     * All of the messages in a specific channel.
+     */
+    public static class ChannelMessages extends ServerEvent {
+        // An array of all of the messages, each message is a map of
+        // a field (sender, message, date) to the object.
+        public Map<String, Object>[] messages;
+        // So the client can remember which channel this was for
+        // as the UI may have changed in between the transfer.
+        public String channelId;
+
+        public ChannelMessages() {
+            type = Types.CHANNELMESSAGES;
+        }
+    }
+
+    /**
+     * Sent when the channel couldn't be created.
+     */
+    public static class InvalidNewChannel extends ServerEvent {
+        public InvalidNewChannel() {
+            type = Types.INVALIDNEWCHANNEL;
         }
     }
 }
