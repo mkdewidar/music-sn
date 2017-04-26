@@ -137,10 +137,7 @@ public class ProtocolImplementer {
                 ClientEvent.SendMessage sendMessage = new ClientEvent.SendMessage();
 
                 sendMessage.channelId = (String) bMsg.get("channel-id");
-                sendMessage.message = new HashMap();
-                sendMessage.message.put("sender", bMsg.get("sender"));
-                sendMessage.message.put("message", bMsg.get("message"));
-                sendMessage.message.put("timestamp", bMsg.get("timestamp"));
+                sendMessage.message = (Map<String, Object>) bMsg.get("message");
 
                 clientEvent = sendMessage;
                 break;
@@ -429,6 +426,7 @@ public class ProtocolImplementer {
 
                 bMsg.put("type", "send-message");
 
+                bMsg.put("channel-id", sendMessage.channelId);
                 bMsg.put("message", sendMessage.message);
 
                 break;

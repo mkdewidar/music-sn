@@ -44,6 +44,7 @@ public class MessagingControl extends VBox {
         }
 
         messages = FXCollections.observableArrayList();
+        currentMessage = new Message(null, null, null);
 
         messagesListView.setItems(messages);
         messagesListView.setCellFactory((param) -> {

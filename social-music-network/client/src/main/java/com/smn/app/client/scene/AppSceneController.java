@@ -34,6 +34,7 @@ public class AppSceneController extends SceneController {
 
     // The type of the last made request, helps determine how to react to the current server event
     // if there are many ways to reply to it e.g what to do with a server OK event.
+    // It is only set by calls which are waiting for an OK reply.
     protected ClientEvent.Types lastMadeRequest;
 
     protected String currentChannelId;
@@ -93,7 +94,10 @@ public class AppSceneController extends SceneController {
         });
 
         messagingControl.setOnSendMessage((event) -> {
-            sendMessageToChannel();
+            // If no channel has been selected yet this will be null
+            if (currentChannelId != null) {
+                sendMessageToChannel();
+            }
         });
 
         pullUserData();
@@ -177,7 +181,9 @@ public class AppSceneController extends SceneController {
                 switch (lastMadeRequest) {
                     // the server has recorded the message we can show it's been sent.
                     case SENDMESSAGE: {
-                        messagingControl.addCurrentMessage();
+                        Platform.runLater(() -> {
+                            messagingControl.addCurrentMessage();
+                        });
                     }
                 }
                 break;
@@ -193,6 +199,8 @@ public class AppSceneController extends SceneController {
     public void setUserDetails(String id, String pass) {
         username = id;
         password = pass;
+
+        messagingControl.currentMessage.sender = username;
     }
 
     /**
@@ -215,7 +223,6 @@ public class AppSceneController extends SceneController {
         userSearch.searchString = searchString;
 
         this.networkController.sendClientEvent(userSearch);
-        lastMadeRequest = userSearch.type;
     }
 
     /**
@@ -242,7 +249,6 @@ public class AppSceneController extends SceneController {
         reply.accept = accept;
 
         this.networkController.sendClientEvent(reply);
-        lastMadeRequest = reply.type;
     }
 
     /**
@@ -281,6 +287,7 @@ public class AppSceneController extends SceneController {
         sendMessage.message.put("timestamp", messagingControl.currentMessage.timestamp);
 
         this.networkController.sendClientEvent(sendMessage);
+        lastMadeRequest = sendMessage.type;
     }
 
     /**
