@@ -76,7 +76,7 @@ public class MessagingControl extends VBox {
      * Adds the current message in the text field to the list.
      */
     public void addCurrentMessage() {
-        messages.add(currentMessage);
+        messages.add(new Message(currentMessage.sender, currentMessage.message, currentMessage.timestamp));
     }
 
     /**
@@ -89,6 +89,8 @@ public class MessagingControl extends VBox {
      * @param msgs The messages to be set in the control
      */
     public void setMessages(Map<String, Object>[] msgs) {
+        messages.clear();
+
         for (Map<String, Object> message : msgs) {
             messages.add(new Message((String) message.get("sender"),
                     (String) message.get("contents"),

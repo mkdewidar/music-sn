@@ -199,12 +199,12 @@ public class DatabaseInterface {
      */
     public Map<String, Object>[] getMessages(String channelId) {
         Document channel = (Document) channelCollection.find(Filters.eq("_id", channelId)).first();
-        ArrayList<BasicDBObject> messagesList = (ArrayList<BasicDBObject>) channel.get("messages");
+        ArrayList<Document> messagesList = (ArrayList<Document>) channel.get("messages");
 
         Map<String, Object>[] messagesMap = new Map[messagesList.size()];
 
         for (int msgIndex = 0; msgIndex < messagesList.size(); msgIndex++) {
-            messagesMap[msgIndex] = messagesList.get(msgIndex).toMap();
+            messagesMap[msgIndex] = messagesList.get(msgIndex);
         }
 
         return messagesMap;
