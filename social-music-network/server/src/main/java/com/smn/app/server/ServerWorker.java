@@ -32,6 +32,8 @@ public class ServerWorker implements Runnable {
     /**
      * Provides a client socket which the worker thread can use to serve the client.
      *
+     * @param clientSocket The socket to the client.
+     *
      * @throws IOException When the streams needed for socket use can't be obtained.
      */
     public void ServeClient(Socket clientSocket) throws IOException {

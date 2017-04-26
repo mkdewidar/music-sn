@@ -95,7 +95,8 @@ public class AppSceneController extends SceneController {
 
         messagingControl.setOnSendMessage((event) -> {
             // If no channel has been selected yet this will be null
-            if (currentChannelId != null) {
+            // The user is also not allowed to post to the feed
+            if ((currentChannelId != null) && (!currentChannelId.endsWith("feed"))) {
                 sendMessageToChannel();
             }
         });
@@ -253,6 +254,9 @@ public class AppSceneController extends SceneController {
 
     /**
      * Sends a request to create a new channel.
+     *
+     * @param channelName The name of the channel to make.
+     * @param memberNames An array of all the member names who will be part of the channel.
      */
     protected void createChannel(String channelName, String[] memberNames) {
         ClientEvent.CreateChannel createChannel = new ClientEvent.CreateChannel();

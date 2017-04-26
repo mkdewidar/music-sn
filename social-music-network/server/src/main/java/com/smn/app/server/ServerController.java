@@ -120,8 +120,13 @@ public class ServerController {
                 ClientEvent.GetMessages getMessages = (ClientEvent.GetMessages) clientEvent;
 
                 ServerEvent.ChannelMessages channelMessages = new ServerEvent.ChannelMessages();
-                channelMessages.messages = database.getMessages(getMessages.channelId);
-                channelMessages.channelId = getMessages.channelId;
+                if (getMessages.channelId.endsWith("feed")) {
+                    channelMessages.messages = database.getFeed(userServerCookie.id);
+                    channelMessages.channelId = getMessages.channelId;
+                } else {
+                    channelMessages.messages = database.getMessages(getMessages.channelId);
+                    channelMessages.channelId = getMessages.channelId;
+                }
 
                 serverEvent = channelMessages;
                 break;
@@ -139,8 +144,13 @@ public class ServerController {
             case SENDMESSAGE: {
                 ClientEvent.SendMessage sendMessage = (ClientEvent.SendMessage) clientEvent;
 
-                database.addMessage((String) sendMessage.message.get("sender"), sendMessage.channelId,
-                        (String) sendMessage.message.get("message"), (Date) sendMessage.message.get("timestamp"));
+                if (sendMessage.channelId.endsWith("wall")) {
+                    database.addPost((String) sendMessage.message.get("sender"),
+                            (String) sendMessage.message.get("message"), (Date) sendMessage.message.get("timestamp"));
+                } else {
+                    database.addMessage((String) sendMessage.message.get("sender"), sendMessage.channelId,
+                            (String) sendMessage.message.get("message"), (Date) sendMessage.message.get("timestamp"));
+                }
 
                 serverEvent = new ServerEvent.Ok();
 

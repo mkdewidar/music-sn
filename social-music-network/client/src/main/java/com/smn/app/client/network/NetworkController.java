@@ -118,8 +118,6 @@ public class NetworkController {
      * Parses a given clientEvent and sends it over to the server, returns the response from the server.
      *
      * @param clientEvent The clientEvent to be sent over the network.
-     *
-     * @return The response for the clientEvent made.
      */
     public void sendClientEvent(ClientEvent clientEvent) {
         String msg = protocol.pack(clientEvent);

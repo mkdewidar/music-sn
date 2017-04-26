@@ -11,7 +11,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -69,6 +68,9 @@ public class DatabaseInterface {
             System.err.println("ERROR: failed to register user\n\t" + e.getMessage());
             return false;
         }
+
+        createChannel(username, "feed", new String[0]);
+        createChannel(username, "wall", new String[0]);
 
         return true;
     }
@@ -208,6 +210,49 @@ public class DatabaseInterface {
         }
 
         return messagesMap;
+    }
+
+    /**
+     * Adds a post to the users wall and updates all the friends feeds about the post.
+     * @param currentUser The name of the current user.
+     * @param contents The contents of the post.
+     * @param timestamp The time at which the post was made.
+     */
+    public void addPost(String currentUser, String contents, Date timestamp) {
+        addMessage(currentUser, currentUser + "_wall", contents, timestamp);
+        // we're getting the number of messages in the currentUsers wall as it will
+        // give us the index for the message we just added
+        int thisPostIndex = ((ArrayList<Document>)
+                ((Document) channelCollection.find(Filters.eq("_id", currentUser + "_wall")).first())
+                .get("messages")).size() - 1;
+
+        String[] friends = getFriends(currentUser);
+
+        // Making reference of this post in all friends feeds
+        for (String friend : friends) {
+            addMessage(currentUser, friend + "_feed", Integer.toString(thisPostIndex), timestamp);
+        }
+    }
+
+    /**
+     * Gets the users feed posts. The feed is just another channel but the messages are references to actual
+     * messages on other people's walls.
+     * @param currentUser The username of the current user.
+     * @return An array of maps of strings to objects, each map being a message.
+     */
+    public Map<String, Object>[] getFeed(String currentUser) {
+        Map<String, Object>[] feedMessages = getMessages(currentUser + "_feed");
+        Map<String, Object>[] feed = new Map[feedMessages.length];
+
+        for (int msgIndex = 0; msgIndex < feedMessages.length; msgIndex++) {
+            String senderChannelId = ((String) feedMessages[msgIndex].get("sender")) + "_wall";
+            Map<String, Object>[] senderWall = getMessages(senderChannelId);
+
+            int postIndexInWall = Integer.parseInt((String) feedMessages[msgIndex].get("contents"));
+            feed[msgIndex] = senderWall[postIndexInWall];
+        }
+
+        return feed;
     }
 
     /**
