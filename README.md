@@ -1,6 +1,6 @@
-# Social Music Network
+# Music Social Network
 
-System Software module coursework for second year undergraduate. The coursework was to create a social music network using Java. Due to time constraints the project doesn't implement all the planned for features. The app features are influenced by Slack and Facebook.
+System Software module coursework for second year undergraduate. The coursework was to create a social music platform using Java. Due to time constraints the project doesn't implement all the planned for features. The app features are influenced by Slack and Facebook.
 
 ## Features
 These are the features that were implemented:
